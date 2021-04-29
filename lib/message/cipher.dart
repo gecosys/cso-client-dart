@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/cso/message/result.dart';
-import 'package:cso_client_flutter/cso/message/type.dart';
+import 'package:cso_client_flutter/message/result.dart';
+import 'package:cso_client_flutter/message/type.dart';
 
 import 'define.dart';
 

@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/cso/message/result.dart';
+import 'package:cso_client_flutter/message/result.dart';
 
 import 'define.dart';
 
