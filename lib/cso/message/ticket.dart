@@ -30,6 +30,9 @@ class Ticket {
     );
   }
 
+  // ParseBytes converts bytes to Ticket
+  // ID: 2 bytes
+  // Token: next 32 bytes
   static Result<Ticket> parseBytes(ByteBuffer buffer) {
     if (buffer.lengthInBytes != 34) {
       return Result(
