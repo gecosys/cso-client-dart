@@ -40,7 +40,7 @@ void main() {
       139,
       47,
     ];
-    final key = await Sha256().hash(Uint8List.fromList([
+    final key = await Sha256().hash([
       114,
       203,
       246,
@@ -73,7 +73,7 @@ void main() {
       108,
       22,
       76
-    ]));
+    ]);
     final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
     final hmac = await HMAC.calcHMAC(Uint8List.fromList(key.bytes), data);
     expect(hmac, expectedHMAC);
@@ -269,7 +269,7 @@ void main() {
       139,
       47,
     ];
-    final key = await Sha256().hash(Uint8List.fromList([
+    final key = await Sha256().hash([
       114,
       203,
       246,
@@ -302,7 +302,7 @@ void main() {
       109,
       22,
       76
-    ]));
+    ]);
 
     final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
     final isSuccess = await HMAC.validateHMAC(
