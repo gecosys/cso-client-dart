@@ -1,24 +1,21 @@
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:cryptography/cryptography.dart';
 
 class HMAC {
-  static Future<Uint8List> calcHMAC(Uint8List key, Uint8List data) async {
+  static Future<List<int>> calcHMAC(List<int> key, List<int> data) async {
     final hmac = Hmac.sha256();
     final mac = await hmac.calculateMac(
       data,
       secretKey: SecretKey(key),
     );
-    return Future.value(Uint8List.fromList(mac.bytes));
+    return Future.value(mac.bytes);
   }
 
   static Future<bool> validateHMAC(
-    Uint8List key,
-    Uint8List data,
-    Uint8List expectedHMAC,
+    List<int> key,
+    List<int> data,
+    List<int> expectedHMAC,
   ) async {
-    if (expectedHMAC.lengthInBytes != 32) {
+    if (expectedHMAC.length != 32) {
       return Future.value(false);
     }
     final hmac = await HMAC.calcHMAC(key, data);

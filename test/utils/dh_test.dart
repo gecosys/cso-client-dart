@@ -67,6 +67,6 @@ void main() {
       clientPrivKey,
       serverPubKey,
     );
-    expect(secretKey.toList(), expectedSecretKey);
+    expect(secretKey, expectedSecretKey);
   });
 }

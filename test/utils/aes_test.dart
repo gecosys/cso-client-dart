@@ -1,11 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:cso_client_flutter/utils/aes.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test("Encrypt", () async {
-    final key = Uint8List.fromList([
+    final key = [
       140,
       34,
       32,
@@ -38,23 +36,24 @@ void main() {
       61,
       28,
       93,
-    ]);
-    final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
-    final aad = Uint8List.fromList("Goldeneye Cloud Socket".codeUnits);
+    ];
+    final data = "Goldeneye Technologies".codeUnits;
+    final aad = "Goldeneye Cloud Socket".codeUnits;
     final cipher = await AES.encrypt(key, data, aad);
     final msg = await AES.decrypt(
       key,
-      Uint8List.fromList(cipher.nonce),
-      Uint8List.fromList(cipher.mac.bytes),
-      Uint8List.fromList(cipher.cipherText),
+      cipher.nonce,
+      cipher.mac.bytes,
+      cipher.cipherText,
       aad,
     );
     expect(msg, data);
   });
 
   test("Decrypt", () async {
-    final expectedMsg = Uint8List.fromList("Goldeneye Technologies".codeUnits);
-    final key = Uint8List.fromList([
+    final expectedMsg = "Goldeneye Technologies".codeUnits;
+    final aad = "Goldeneye Cloud Socket".codeUnits;
+    final key = [
       140,
       34,
       32,
@@ -87,8 +86,8 @@ void main() {
       61,
       28,
       93,
-    ]);
-    final iv = Uint8List.fromList([
+    ];
+    final iv = [
       68,
       68,
       112,
@@ -101,9 +100,8 @@ void main() {
       31,
       15,
       69,
-    ]);
-    final aad = Uint8List.fromList("Goldeneye Cloud Socket".codeUnits);
-    final authenTag = Uint8List.fromList([
+    ];
+    final authenTag = [
       170,
       251,
       82,
@@ -120,8 +118,8 @@ void main() {
       168,
       231,
       63,
-    ]);
-    final cipher = Uint8List.fromList([
+    ];
+    final cipher = [
       183,
       226,
       253,
@@ -144,7 +142,7 @@ void main() {
       15,
       13,
       31,
-    ]);
+    ];
     final msg = await AES.decrypt(
       key,
       iv,

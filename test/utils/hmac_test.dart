@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:cso_client_flutter/utils/hmac.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cryptography/cryptography.dart';
@@ -74,8 +72,10 @@ void main() {
       22,
       76
     ]);
-    final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
-    final hmac = await HMAC.calcHMAC(Uint8List.fromList(key.bytes), data);
+    final hmac = await HMAC.calcHMAC(
+      key.bytes,
+      "Goldeneye Technologies".codeUnits,
+    );
     expect(hmac, expectedHMAC);
   });
   test('Validate HMAC', () async {
@@ -113,7 +113,7 @@ void main() {
       139,
       47,
     ];
-    final key = await Sha256().hash(Uint8List.fromList([
+    final key = await Sha256().hash([
       114,
       203,
       246,
@@ -146,13 +146,12 @@ void main() {
       108,
       22,
       76
-    ]));
+    ]);
 
-    final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
     final isSuccess = await HMAC.validateHMAC(
-      Uint8List.fromList(key.bytes),
-      data,
-      Uint8List.fromList(expectedHMAC),
+      key.bytes,
+      "Goldeneye Technologies".codeUnits,
+      expectedHMAC,
     );
     expect(isSuccess, true);
   });
@@ -191,7 +190,7 @@ void main() {
       139,
       47,
     ];
-    final key = await Sha256().hash(Uint8List.fromList([
+    final key = await Sha256().hash([
       114,
       203,
       246,
@@ -224,13 +223,12 @@ void main() {
       108,
       22,
       76
-    ]));
+    ]);
 
-    final data = Uint8List.fromList("Goldeneye Technologies Fake".codeUnits);
     final isSuccess = await HMAC.validateHMAC(
-      Uint8List.fromList(key.bytes),
-      data,
-      Uint8List.fromList(expectedHMAC),
+      key.bytes,
+      "Goldeneye Technologies Fake".codeUnits,
+      expectedHMAC,
     );
     expect(isSuccess, false);
   });
@@ -304,11 +302,10 @@ void main() {
       76
     ]);
 
-    final data = Uint8List.fromList("Goldeneye Technologies".codeUnits);
     final isSuccess = await HMAC.validateHMAC(
-      Uint8List.fromList(key.bytes),
-      data,
-      Uint8List.fromList(expectedHMAC),
+      key.bytes,
+      "Goldeneye Technologies".codeUnits,
+      expectedHMAC,
     );
     expect(isSuccess, false);
   });

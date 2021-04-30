@@ -1,8 +1,6 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:cso_client_flutter/message/result.dart';
 
 class DH {
   static BigInt _randomBigInt(int numberBytes) {
@@ -27,13 +25,13 @@ class DH {
     return gKey.modPow(privKey, nKey);
   }
 
-  static Future<Uint8List> calcSecretKey(
+  static Future<List<int>> calcSecretKey(
     BigInt nKey,
     BigInt clientPrivKey,
     BigInt serverPubKey,
   ) async {
     final sharedKey = serverPubKey.modPow(clientPrivKey, nKey);
     final secretKey = await Sha256().hash(sharedKey.toString().codeUnits);
-    return Future.value(Uint8List.fromList(secretKey.bytes));
+    return Future.value(secretKey.bytes);
   }
 }

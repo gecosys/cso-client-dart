@@ -1,16 +1,20 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:cso_client_flutter/message/define.dart';
 
 class AES {
   static Future<SecretBox> encrypt(
-    Uint8List key,
-    Uint8List data,
-    Uint8List aad,
+    List<int> key,
+    List<int> data,
+    List<int> aad,
   ) async {
-    final aes = AesGcm.with256bits(nonceLength: 12);
-    final iv = AES._randomUint8List(12);
+    final random = Random.secure();
+    final aes = AesGcm.with256bits(nonceLength: Constant.lengthIV);
+    final iv = List<int>.generate(
+      Constant.lengthIV,
+      (index) => random.nextInt(256),
+    );
     return aes.encrypt(
       data,
       secretKey: SecretKey(key),
@@ -19,12 +23,12 @@ class AES {
     );
   }
 
-  static Future<Uint8List> decrypt(
-    Uint8List key,
-    Uint8List iv,
-    Uint8List authenTag,
-    Uint8List data,
-    Uint8List aad,
+  static Future<List<int>> decrypt(
+    List<int> key,
+    List<int> iv,
+    List<int> authenTag,
+    List<int> data,
+    List<int> aad,
   ) async {
     final aes = AesGcm.with256bits(nonceLength: 12);
     final msg = await aes.decrypt(
@@ -36,15 +40,6 @@ class AES {
       secretKey: SecretKey(key),
       aad: aad,
     );
-    return Future.value(Uint8List.fromList(msg));
-  }
-
-  static Uint8List _randomUint8List(int size) {
-    final random = Random.secure();
-    final buffer = Uint8List(size);
-    for (var i = 0; i < size; ++i) {
-      buffer[i] = random.nextInt(256);
-    }
-    return buffer;
+    return Future.value(msg);
   }
 }
