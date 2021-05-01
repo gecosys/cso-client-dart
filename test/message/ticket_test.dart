@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Parse bytes', () {
-    var expectedToken = Uint8List.fromList([
+    var expectedToken = [
       213,
       132,
       113,
@@ -39,8 +39,8 @@ void main() {
       76,
       66,
       238,
-    ]);
-    var input = Uint8List.fromList([
+    ];
+    var input = [
       255,
       255,
       213,
@@ -75,9 +75,9 @@ void main() {
       76,
       66,
       238,
-    ]);
+    ];
 
-    var ticket = Ticket.parseBytes(input.buffer);
+    var ticket = Ticket.parseBytes(Uint8List.fromList(input).buffer);
     expect(ticket.errorCode, ErrorCode.success);
     expect(ticket.data.getID(), BigInt.from(65535).toUnsigned(16));
     expect(ticket.data.getToken(), expectedToken);

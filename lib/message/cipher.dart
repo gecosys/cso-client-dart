@@ -17,10 +17,10 @@ class Cipher {
   bool _isRequest;
   bool _isEncrypted;
   String _name;
-  Uint8List _iv;
-  Uint8List _data;
-  Uint8List _authenTag;
-  Uint8List _sign;
+  List<int> _iv;
+  List<int> _data;
+  List<int> _authenTag;
+  List<int> _sign;
 
   Cipher({
     required int msgID,
@@ -31,10 +31,10 @@ class Cipher {
     required bool isRequest,
     required bool isEncrypted,
     required String name,
-    required Uint8List iv,
-    required Uint8List data,
-    required Uint8List authenTag,
-    required Uint8List sign,
+    required List<int> iv,
+    required List<int> data,
+    required List<int> authenTag,
+    required List<int> sign,
   })   : _msgID = msgID,
         _msgType = msgType,
         _msgTag = msgTag,
@@ -80,19 +80,19 @@ class Cipher {
     return this._name;
   }
 
-  Uint8List getIV() {
+  List<int> getIV() {
     return this._iv;
   }
 
-  Uint8List getAuthenTag() {
+  List<int> getAuthenTag() {
     return this._authenTag;
   }
 
-  Uint8List getData() {
+  List<int> getData() {
     return this._data;
   }
 
-  Uint8List getSign() {
+  List<int> getSign() {
     return this._sign;
   }
 
@@ -106,14 +106,14 @@ class Cipher {
       isRequest: false,
       isEncrypted: false,
       name: "",
-      iv: Uint8List(0),
-      data: Uint8List(0),
-      authenTag: Uint8List(0),
-      sign: Uint8List(0),
+      iv: List.empty(),
+      data: List.empty(),
+      authenTag: List.empty(),
+      sign: List.empty(),
     );
   }
 
-  Result<Uint8List> intoBytes() {
+  Result<List<int>> intoBytes() {
     if (this._isEncrypted) {
       return Cipher.buildCipherBytes(
         this._msgID,
@@ -141,7 +141,7 @@ class Cipher {
     );
   }
 
-  Result<Uint8List> getRawBytes() {
+  Result<List<int>> getRawBytes() {
     return Cipher.buildRawBytes(
       this._msgID,
       this._msgTag,
@@ -155,7 +155,7 @@ class Cipher {
     );
   }
 
-  Result<Uint8List> getAad() {
+  Result<List<int>> getAad() {
     return Cipher.buildAad(
       this._msgID,
       this._msgTag,
@@ -227,14 +227,16 @@ class Cipher {
     }
 
     // Parse AUTHEN_TAG, IV
-    Uint8List authenTag;
-    Uint8List iv;
-    Uint8List sign;
+    List<int> authenTag;
+    List<int> iv;
+    List<int> sign;
     if (isEncrypted) {
       var posIV = posAuthenTag + Constant.lengthAuthenTag;
-      authenTag = buffer.asUint8List(posAuthenTag, Constant.lengthAuthenTag);
-      iv = buffer.asUint8List(posIV, Constant.lengthIV);
-      sign = Uint8List(0);
+      authenTag = buffer
+          .asUint8List(posAuthenTag, Constant.lengthAuthenTag)
+          .toList(growable: false);
+      iv = buffer.asUint8List(posIV, Constant.lengthIV).toList(growable: false);
+      sign = List.empty();
     } else {
       var posSign = fixedLen;
       fixedLen += Constant.lengthSign;
@@ -244,9 +246,11 @@ class Cipher {
           data: Cipher.newDefault(),
         );
       }
-      authenTag = Uint8List(0);
-      iv = Uint8List(0);
-      sign = buffer.asUint8List(posSign, Constant.lengthSign);
+      authenTag = List.empty();
+      iv = List.empty();
+      sign = buffer
+          .asUint8List(posSign, Constant.lengthSign)
+          .toList(growable: false);
     }
 
     // Parse name
@@ -255,11 +259,11 @@ class Cipher {
 
     // Parse data
     var lenData = lenBuffer - posData;
-    Uint8List data;
+    List<int> data;
     if (lenData > 0) {
-      data = buffer.asUint8List(posData);
+      data = buffer.asUint8List(posData).toList(growable: false);
     } else {
-      data = Uint8List(0);
+      data = List.empty();
     }
 
     return Result(
@@ -281,7 +285,7 @@ class Cipher {
     );
   }
 
-  static Result<Uint8List> buildRawBytes(
+  static Result<List<int>> buildRawBytes(
     int msgID,
     int msgTag,
     MessageType msgType,
@@ -290,16 +294,16 @@ class Cipher {
     bool isLast,
     bool isRequest,
     String name,
-    Uint8List data,
+    List<int> data,
   ) {
     var lenName = name.length;
     if (lenName == 0 || lenName > MaxConnectionNameLength) {
       return Result(
         errorCode: ErrorCode.invalidConnectionName,
-        data: Uint8List(0),
+        data: List.empty(),
       );
     }
-    var lenData = data.lengthInBytes;
+    var lenData = data.length;
 
     var bEncrypted = isEncrypted ? 1 : 0;
     var bFirst = isFirst ? 1 : 0;
@@ -315,7 +319,7 @@ class Cipher {
       fixedLen += 8;
     }
 
-    var buffer = Uint8List(fixedLen + lenName + lenData);
+    var buffer = List.filled(fixedLen + lenName + lenData, 0, growable: false);
     buffer[0] = valMsgID.toUnsigned(8).toInt();
     buffer[1] = (valMsgID >> 8).toUnsigned(8).toInt();
     buffer[2] = (valMsgID >> 16).toUnsigned(8).toInt();
@@ -352,7 +356,7 @@ class Cipher {
     );
   }
 
-  static Result<Uint8List> buildAad(
+  static Result<List<int>> buildAad(
     int msgID,
     int msgTag,
     MessageType msgType,
@@ -366,7 +370,7 @@ class Cipher {
     if (lenName == 0 || lenName > MaxConnectionNameLength) {
       return Result(
         errorCode: ErrorCode.invalidConnectionName,
-        data: Uint8List(0),
+        data: List.empty(),
       );
     }
 
@@ -384,7 +388,7 @@ class Cipher {
       fixedLen += 8;
     }
 
-    var buffer = Uint8List(fixedLen + lenName);
+    var buffer = List.filled(fixedLen + lenName, 0, growable: false);
     buffer[0] = valMsgID.toUnsigned(8).toInt();
     buffer[1] = (valMsgID >> 8).toUnsigned(8).toInt();
     buffer[2] = (valMsgID >> 16).toUnsigned(8).toInt();
@@ -418,7 +422,7 @@ class Cipher {
     );
   }
 
-  static Result<Uint8List> buildCipherBytes(
+  static Result<List<int>> buildCipherBytes(
     int msgID,
     int msgTag,
     MessageType msgType,
@@ -426,9 +430,9 @@ class Cipher {
     bool isLast,
     bool isRequest,
     String name,
-    Uint8List iv,
-    Uint8List data,
-    Uint8List authenTag,
+    List<int> iv,
+    List<int> data,
+    List<int> authenTag,
   ) {
     return Cipher.buildBytes(
       msgID,
@@ -442,11 +446,11 @@ class Cipher {
       iv,
       data,
       authenTag,
-      Uint8List(0),
+      List<int>.empty(),
     );
   }
 
-  static Result<Uint8List> buildNoCipherBytes(
+  static Result<List<int>> buildNoCipherBytes(
     int msgID,
     int msgTag,
     MessageType msgType,
@@ -454,10 +458,10 @@ class Cipher {
     bool isLast,
     bool isRequest,
     String name,
-    Uint8List data,
-    Uint8List sign,
+    List<int> data,
+    List<int> sign,
   ) {
-    var empty = Uint8List(0);
+    var empty = List<int>.empty();
     return Cipher.buildBytes(
       msgID,
       msgTag,
@@ -474,7 +478,7 @@ class Cipher {
     );
   }
 
-  static Result<Uint8List> buildBytes(
+  static Result<List<int>> buildBytes(
     int msgID,
     int msgTag,
     MessageType msgType,
@@ -483,28 +487,28 @@ class Cipher {
     bool isLast,
     bool isRequest,
     String name,
-    Uint8List iv,
-    Uint8List data,
-    Uint8List authenTag,
-    Uint8List sign,
+    List<int> iv,
+    List<int> data,
+    List<int> authenTag,
+    List<int> sign,
   ) {
     var lenName = name.length;
     if (lenName == 0 || lenName > MaxConnectionNameLength) {
       return Result(
         errorCode: ErrorCode.invalidConnectionName,
-        data: Uint8List(0),
+        data: List.empty(),
       );
     }
 
-    var lenIV = iv.lengthInBytes;
-    var lenAuthenTag = authenTag.lengthInBytes;
-    var lenSign = sign.lengthInBytes;
+    var lenIV = iv.length;
+    var lenAuthenTag = authenTag.length;
+    var lenSign = sign.length;
     if (isEncrypted) {
       if (lenIV != Constant.lengthIV ||
           lenAuthenTag != Constant.lengthAuthenTag) {
         return Result(
           errorCode: ErrorCode.invalidBytes,
-          data: Uint8List(0),
+          data: List.empty(),
         );
       }
       lenSign = 0;
@@ -512,7 +516,7 @@ class Cipher {
       if (lenSign != Constant.lengthSign) {
         return Result(
           errorCode: ErrorCode.invalidBytes,
-          data: Uint8List(0),
+          data: List.empty(),
         );
       }
       lenIV = 0;
@@ -533,10 +537,10 @@ class Cipher {
       fixedLen += 8;
     }
 
-    var lenData = data.lengthInBytes;
+    var lenData = data.length;
     var lenBuffer =
         fixedLen + lenAuthenTag + lenIV + lenSign + lenName + lenData;
-    var buffer = Uint8List(lenBuffer);
+    var buffer = List.filled(lenBuffer, 0, growable: false);
     buffer[0] = valMsgID.toUnsigned(8).toInt();
     buffer[1] = (valMsgID >> 8).toUnsigned(8).toInt();
     buffer[2] = (valMsgID >> 16).toUnsigned(8).toInt();

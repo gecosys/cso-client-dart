@@ -17,7 +17,7 @@ void main() {
 }
 
 void testBuildRawBytes() {
-  var expectedBytes = Uint8List.fromList([
+  var expectedBytes = [
     0,
     4,
     0,
@@ -80,7 +80,7 @@ void testBuildRawBytes() {
     105,
     101,
     115
-  ]);
+  ];
   var rawBytes = Cipher.buildRawBytes(
     1024,
     1025,
@@ -90,7 +90,7 @@ void testBuildRawBytes() {
     true,
     true,
     gConnName,
-    Uint8List.fromList("Goldeneye Technologies".codeUnits),
+    "Goldeneye Technologies".codeUnits,
   );
   expect(rawBytes.errorCode, ErrorCode.success);
   expect(rawBytes.data, expectedBytes);
@@ -143,7 +143,7 @@ void testBuildRawBytes() {
 }
 
 void testBuildAad() {
-  var expectedAad = Uint8List.fromList([
+  var expectedAad = [
     0,
     4,
     0,
@@ -184,7 +184,7 @@ void testBuildAad() {
     105,
     101,
     115
-  ]);
+  ];
   var aad = Cipher.buildAad(
     1024,
     1025,
@@ -276,7 +276,7 @@ void testIntoBytes() {
     var bytes = cipher.intoBytes();
     expect(bytes.errorCode, ErrorCode.success);
 
-    var parsedCipher = Cipher.parseBytes(bytes.data.buffer);
+    var parsedCipher = Cipher.parseBytes(Uint8List.fromList(bytes.data).buffer);
     expect(parsedCipher.errorCode, ErrorCode.success);
     expect(parsedCipher.data.getIsEncrypted(), isEncrypted);
     expect(parsedCipher.data.getIsFirst(), isFirst);
@@ -317,7 +317,7 @@ void testParseCipherBytes() {
   var expectedMessageTag = 1025;
   var expectedMessageType = MessageType.single;
   var expectedName = gConnName;
-  var expectedIV = Uint8List.fromList([
+  var expectedIV = [
     52,
     69,
     113,
@@ -330,8 +330,8 @@ void testParseCipherBytes() {
     40,
     224,
     187,
-  ]);
-  var expectedAuthenTag = Uint8List.fromList([
+  ];
+  var expectedAuthenTag = [
     106,
     232,
     205,
@@ -348,9 +348,9 @@ void testParseCipherBytes() {
     44,
     27,
     45,
-  ]);
+  ];
   var expectedData = "Goldeneye Technologies".codeUnits;
-  var expectedAad = Uint8List.fromList([
+  var expectedAad = [
     0,
     4,
     0,
@@ -391,8 +391,8 @@ void testParseCipherBytes() {
     105,
     101,
     115,
-  ]);
-  var input = Uint8List.fromList([
+  ];
+  var input = [
     0,
     4,
     0,
@@ -483,8 +483,8 @@ void testParseCipherBytes() {
     105,
     101,
     115,
-  ]);
-  var cipher = Cipher.parseBytes(input.buffer);
+  ];
+  var cipher = Cipher.parseBytes(Uint8List.fromList(input).buffer);
   expect(cipher.errorCode, ErrorCode.success);
   expect(cipher.data.getIsEncrypted(), expectedIsEncrypted);
   expect(cipher.data.getIsFirst(), expectedIsFirst);
@@ -518,7 +518,7 @@ void testParseNoCipherBytes() {
   var expectedMessageTag = 1025;
   var expectedMessageType = MessageType.single;
   var expectedName = gConnName;
-  var expectedAad = Uint8List.fromList([
+  var expectedAad = [
     0,
     4,
     0,
@@ -559,8 +559,8 @@ void testParseNoCipherBytes() {
     105,
     101,
     115,
-  ]);
-  var expectedSign = Uint8List.fromList([
+  ];
+  var expectedSign = [
     140,
     57,
     139,
@@ -593,9 +593,9 @@ void testParseNoCipherBytes() {
     151,
     202,
     88,
-  ]);
+  ];
   var expectedData = "Goldeneye Technologies".codeUnits;
-  var input = Uint8List.fromList([
+  var input = [
     0,
     4,
     0,
@@ -690,9 +690,9 @@ void testParseNoCipherBytes() {
     105,
     101,
     115,
-  ]);
+  ];
 
-  var cipher = Cipher.parseBytes(input.buffer);
+  var cipher = Cipher.parseBytes(Uint8List.fromList(input).buffer);
   expect(cipher.errorCode, ErrorCode.success);
   expect(cipher.data.getIsEncrypted(), expectedIsEncrypted);
   expect(cipher.data.getIsFirst(), expectedIsFirst);
@@ -721,10 +721,10 @@ void runCases(
       int msgID,
       int msgTag,
       MessageType msgType,
-      Uint8List iv,
-      Uint8List data,
-      Uint8List authenTag,
-      Uint8List sign,
+      List<int> iv,
+      List<int> data,
+      List<int> authenTag,
+      List<int> sign,
       bool isFirst,
       bool isLast,
       bool isRequest,
@@ -750,16 +750,21 @@ void runCases(
     [false, false, false]
   ];
 
+  final random = Random.secure();
   for (var i = 0; i < 2; ++i) {
     isEncrypted = !isEncrypted;
     for (var msgType in msgTypes) {
       for (var flagsTable in flagTables) {
-        var msgID = randomUint8List(64).buffer.asByteData(0).getUint64(0);
-        var msgTag = randomUint8List(64).buffer.asByteData(0).getUint64(0);
-        var iv = randomUint8List(12);
-        var data = randomUint8List(1024);
-        var authenTag = randomUint8List(16);
-        var sign = randomUint8List(32);
+        var msgID = Uint8List.fromList(
+          List.generate(64, (index) => random.nextInt(256)),
+        ).buffer.asByteData(0).getUint64(0);
+        var msgTag = Uint8List.fromList(
+          List.generate(64, (index) => random.nextInt(256)),
+        ).buffer.asByteData(0).getUint64(0);
+        var iv = List.generate(12, (index) => random.nextInt(256));
+        var data = List.generate(1024, (index) => random.nextInt(256));
+        var authenTag = List.generate(16, (index) => random.nextInt(256));
+        var sign = List.generate(32, (index) => random.nextInt(256));
 
         var isFirst = flagsTable[0];
         var isLast = flagsTable[1];
@@ -780,13 +785,4 @@ void runCases(
       }
     }
   }
-}
-
-Uint8List randomUint8List(int size) {
-  final random = Random.secure();
-  final buffer = Uint8List(size);
-  for (var i = 0; i < size; ++i) {
-    buffer[i] = random.nextInt(256);
-  }
-  return buffer;
 }
