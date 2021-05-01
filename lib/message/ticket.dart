@@ -7,6 +7,10 @@ class Ticket {
   final int _id;
   final List<int> _token;
 
+  Ticket.initDefault()
+      : _id = 0,
+        _token = List.empty();
+
   Ticket({
     required int id,
     required List<int> token,
@@ -21,13 +25,6 @@ class Ticket {
     return this._token;
   }
 
-  static Ticket newDefault() {
-    return Ticket(
-      id: 0,
-      token: List.empty(),
-    );
-  }
-
   // ParseBytes converts bytes to Ticket
   // ID: 2 bytes
   // Token: next 32 bytes
@@ -35,7 +32,7 @@ class Ticket {
     if (buffer.lengthInBytes != 34) {
       return Result(
         errorCode: ErrorCode.invalidBytes,
-        data: Ticket.newDefault(),
+        data: Ticket.initDefault(),
       );
     }
     var bytes = buffer.asByteData(0);

@@ -22,6 +22,20 @@ class Cipher {
   List<int> _authenTag;
   List<int> _sign;
 
+  Cipher.initDefault()
+      : _msgID = 0,
+        _msgType = MessageType.single,
+        _msgTag = 0,
+        _isFirst = false,
+        _isLast = false,
+        _isRequest = false,
+        _isEncrypted = false,
+        _name = "",
+        _iv = List.empty(),
+        _data = List.empty(),
+        _authenTag = List.empty(),
+        _sign = List.empty();
+
   Cipher({
     required int msgID,
     required MessageType msgType,
@@ -96,23 +110,6 @@ class Cipher {
     return this._sign;
   }
 
-  static Cipher newDefault() {
-    return Cipher(
-      msgID: 0,
-      msgType: MessageType.single,
-      msgTag: 0,
-      isFirst: false,
-      isLast: false,
-      isRequest: false,
-      isEncrypted: false,
-      name: "",
-      iv: List.empty(),
-      data: List.empty(),
-      authenTag: List.empty(),
-      sign: List.empty(),
-    );
-  }
-
   Result<List<int>> intoBytes() {
     if (this._isEncrypted) {
       return Cipher.buildCipherBytes(
@@ -185,7 +182,7 @@ class Cipher {
     if (lenBuffer < fixedLen) {
       return Result(
         errorCode: ErrorCode.invalidBytes,
-        data: Cipher.newDefault(),
+        data: Cipher.initDefault(),
       );
     }
 
@@ -203,7 +200,7 @@ class Cipher {
       if (lenBuffer < fixedLen) {
         return Result(
           errorCode: ErrorCode.invalidBytes,
-          data: Cipher.newDefault(),
+          data: Cipher.initDefault(),
         );
       }
       msgTag = bytes.getUint64(10, Endian.little);
@@ -216,13 +213,13 @@ class Cipher {
     if (lenName == 0 || lenName > MaxConnectionNameLength) {
       return Result(
         errorCode: ErrorCode.invalidConnectionName,
-        data: Cipher.newDefault(),
+        data: Cipher.initDefault(),
       );
     }
     if (lenBuffer < (fixedLen + lenName)) {
       return Result(
         errorCode: ErrorCode.invalidBytes,
-        data: Cipher.newDefault(),
+        data: Cipher.initDefault(),
       );
     }
 
@@ -243,7 +240,7 @@ class Cipher {
       if (lenBuffer < (fixedLen + lenName)) {
         return Result(
           errorCode: ErrorCode.invalidBytes,
-          data: Cipher.newDefault(),
+          data: Cipher.initDefault(),
         );
       }
       authenTag = List.empty();

@@ -12,6 +12,12 @@ class ReadyTicket {
   final int _maskRead;
   final int _idxWrite;
 
+  ReadyTicket.initDefault()
+      : _isReady = false,
+        _idxRead = 0,
+        _maskRead = 0,
+        _idxWrite = 0;
+
   ReadyTicket({
     required bool isReady,
     required int idxRead,
@@ -38,15 +44,6 @@ class ReadyTicket {
     return BigInt.from(this._idxWrite).toUnsigned(64);
   }
 
-  static ReadyTicket newDefault() {
-    return ReadyTicket(
-      isReady: false,
-      idxRead: 0,
-      maskRead: 0,
-      idxWrite: 0,
-    );
-  }
-
   // ParseBytes converts bytes to ReadyTicket
   // Flag is_ready: 1 byte
   // Idx Read: 8 bytes
@@ -57,7 +54,7 @@ class ReadyTicket {
     if (lenBuffer != 21) {
       return Result(
         errorCode: ErrorCode.invalidBytes,
-        data: ReadyTicket.newDefault(),
+        data: ReadyTicket.initDefault(),
       );
     }
     var bytes = buffer.asByteData(0, lenBuffer);
