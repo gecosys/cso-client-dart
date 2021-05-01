@@ -9,4 +9,6 @@ class ErrorCode {
   static const invalidBytes = 1;
   static const invalidConnectionName = 2;
   static const invalidToken = 3;
+  static const invalidSignature = 4;
+  static const errorMessage = 4;
 }
