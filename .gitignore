@@ -11,3 +11,5 @@ ios
 web
 
 cso_client_flutter.iml
+
+**/cso_key.json
