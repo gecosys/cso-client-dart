@@ -1,5 +1,5 @@
-import 'package:cso_client_flutter/src/csoqueue/queue_entity.dart';
-import 'package:cso_client_flutter/src/csoqueue/queue_interface.dart';
+import 'queue_entity.dart';
+import 'queue_interface.dart';
 
 class Queue implements IQueue {
   final int _cap;

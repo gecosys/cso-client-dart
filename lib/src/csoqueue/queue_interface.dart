@@ -1,4 +1,4 @@
-import 'package:cso_client_flutter/src/csoqueue/queue_entity.dart';
+import 'queue_entity.dart';
 
 abstract class IQueue {
   bool pushMessage(ItemQueue item);

@@ -1,5 +1,5 @@
-import 'package:cso_client_flutter/src/message/cipher.dart';
-import 'package:cso_client_flutter/src/message/result.dart';
+import '../message/cipher.dart';
+import '../message/result.dart';
 
 abstract class IParser {
   void setSecretKey(List<int> secretKey);

@@ -1,15 +1,17 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:cso_client_flutter/src/message/define.dart';
-import 'package:cso_client_flutter/src/message/ticket.dart';
-import 'package:cso_client_flutter/src/utils/aes.dart';
-import 'package:cso_client_flutter/src/utils/dh.dart';
-import 'package:cso_client_flutter/src/utils/rsa.dart';
-import 'package:cso_client_flutter/src/config/config.dart';
-import 'package:cso_client_flutter/src/csoproxy/proxy_message.dart';
-import 'package:cso_client_flutter/src/csoproxy/proxy_interface.dart';
-import 'package:cso_client_flutter/src/message/result.dart';
+
+import 'proxy_message.dart';
+import 'proxy_interface.dart';
+
+import '../message/define.dart';
+import '../message/ticket.dart';
+import '../utils/aes.dart';
+import '../utils/dh.dart';
+import '../utils/rsa.dart';
+import '../config/config.dart';
+import '../message/result.dart';
 
 class Proxy implements IProxy {
   IConfig _conf;

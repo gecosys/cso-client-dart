@@ -1,23 +1,24 @@
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/src/config/config.dart';
-import 'package:cso_client_flutter/src/csoconnection/conn_implement.dart';
-import 'package:cso_client_flutter/src/csoconnection/conn_interface.dart';
-import 'package:cso_client_flutter/src/csoconnector/connector_interface.dart';
-import 'package:cso_client_flutter/src/csocounter/counter_implement.dart';
-import 'package:cso_client_flutter/src/csocounter/counter_interface.dart';
-import 'package:cso_client_flutter/src/csoparser/parser_implement.dart';
-import 'package:cso_client_flutter/src/csoparser/parser_interface.dart';
-import 'package:cso_client_flutter/src/csoproxy/proxy_implement.dart';
-import 'package:cso_client_flutter/src/csoproxy/proxy_interface.dart';
-import 'package:cso_client_flutter/src/csoproxy/proxy_message.dart';
-import 'package:cso_client_flutter/src/csoqueue/queue_entity.dart';
-import 'package:cso_client_flutter/src/csoqueue/queue_implement.dart';
-import 'package:cso_client_flutter/src/csoqueue/queue_interface.dart';
-import 'package:cso_client_flutter/src/message/define.dart';
-import 'package:cso_client_flutter/src/message/readyticket.dart';
-import 'package:cso_client_flutter/src/message/result.dart';
-import 'package:cso_client_flutter/src/message/type.dart';
+import 'connector_interface.dart';
+
+import '../config/config.dart';
+import '../csoconnection/conn_implement.dart';
+import '../csoconnection/conn_interface.dart';
+import '../csocounter/counter_implement.dart';
+import '../csocounter/counter_interface.dart';
+import '../csoparser/parser_implement.dart';
+import '../csoparser/parser_interface.dart';
+import '../csoproxy/proxy_implement.dart';
+import '../csoproxy/proxy_interface.dart';
+import '../csoproxy/proxy_message.dart';
+import '../csoqueue/queue_entity.dart';
+import '../csoqueue/queue_implement.dart';
+import '../csoqueue/queue_interface.dart';
+import '../message/define.dart';
+import '../message/readyticket.dart';
+import '../message/result.dart';
+import '../message/type.dart';
 
 class Connector implements IConnector {
   bool _isActivated;

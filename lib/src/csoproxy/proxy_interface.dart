@@ -1,5 +1,6 @@
-import 'package:cso_client_flutter/src/csoproxy/proxy_message.dart';
-import 'package:cso_client_flutter/src/message/result.dart';
+import 'proxy_message.dart';
+
+import '../message/result.dart';
 
 abstract class IProxy {
   Future<Result<ServerKey>> exchangeKey();

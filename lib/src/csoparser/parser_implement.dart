@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/src/message/cipher.dart';
-import 'package:cso_client_flutter/src/message/define.dart';
-import 'package:cso_client_flutter/src/message/result.dart';
-import 'package:cso_client_flutter/src/message/type.dart';
-import 'package:cso_client_flutter/src/utils/aes.dart';
-import 'package:cso_client_flutter/src/utils/hmac.dart';
-
 import 'parser_interface.dart';
+
+import '../message/cipher.dart';
+import '../message/define.dart';
+import '../message/result.dart';
+import '../message/type.dart';
+import '../utils/aes.dart';
+import '../utils/hmac.dart';
 
 class Parser implements IParser {
   List<int> _secretKey = [];

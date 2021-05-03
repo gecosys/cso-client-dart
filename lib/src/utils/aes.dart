@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:cso_client_flutter/src/message/define.dart';
+
+import '../message/define.dart';
 
 class AES {
   static Future<SecretBox> encrypt(
