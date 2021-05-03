@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/message/define.dart';
-import 'package:cso_client_flutter/message/result.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+import 'package:cso_client_flutter/src/message/result.dart';
 
 class Ticket {
   final int _id;

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/message/define.dart';
-import 'package:cso_client_flutter/message/readyticket.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+import 'package:cso_client_flutter/src/message/readyticket.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

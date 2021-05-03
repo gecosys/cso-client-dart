@@ -1,4 +1,4 @@
-import 'package:cso_client_flutter/utils/dh.dart';
+import 'package:cso_client_flutter/src/utils/dh.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

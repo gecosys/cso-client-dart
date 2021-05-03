@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/message/cipher.dart';
-import 'package:cso_client_flutter/message/define.dart';
-import 'package:cso_client_flutter/message/type.dart';
+import 'package:cso_client_flutter/src/message/cipher.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+import 'package:cso_client_flutter/src/message/type.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const gConnName = "goldeneye_technologies";

@@ -1,24 +1,23 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/config/config.dart';
-import 'package:cso_client_flutter/csoconnection/conn_implement.dart';
-import 'package:cso_client_flutter/csoconnection/conn_interface.dart';
-import 'package:cso_client_flutter/csoconnector/connector_interface.dart';
-import 'package:cso_client_flutter/csocounter/counter_implement.dart';
-import 'package:cso_client_flutter/csocounter/counter_interface.dart';
-import 'package:cso_client_flutter/csoparser/parser_implement.dart';
-import 'package:cso_client_flutter/csoparser/parser_interface.dart';
-import 'package:cso_client_flutter/csoproxy/proxy_implement.dart';
-import 'package:cso_client_flutter/csoproxy/proxy_interface.dart';
-import 'package:cso_client_flutter/csoproxy/proxy_message.dart';
-import 'package:cso_client_flutter/csoqueue/queue_entity.dart';
-import 'package:cso_client_flutter/csoqueue/queue_implement.dart';
-import 'package:cso_client_flutter/csoqueue/queue_interface.dart';
-import 'package:cso_client_flutter/message/define.dart';
-import 'package:cso_client_flutter/message/readyticket.dart';
-import 'package:cso_client_flutter/message/result.dart';
-import 'package:cso_client_flutter/message/type.dart';
+import 'package:cso_client_flutter/src/config/config.dart';
+import 'package:cso_client_flutter/src/csoconnection/conn_implement.dart';
+import 'package:cso_client_flutter/src/csoconnection/conn_interface.dart';
+import 'package:cso_client_flutter/src/csoconnector/connector_interface.dart';
+import 'package:cso_client_flutter/src/csocounter/counter_implement.dart';
+import 'package:cso_client_flutter/src/csocounter/counter_interface.dart';
+import 'package:cso_client_flutter/src/csoparser/parser_implement.dart';
+import 'package:cso_client_flutter/src/csoparser/parser_interface.dart';
+import 'package:cso_client_flutter/src/csoproxy/proxy_implement.dart';
+import 'package:cso_client_flutter/src/csoproxy/proxy_interface.dart';
+import 'package:cso_client_flutter/src/csoproxy/proxy_message.dart';
+import 'package:cso_client_flutter/src/csoqueue/queue_entity.dart';
+import 'package:cso_client_flutter/src/csoqueue/queue_implement.dart';
+import 'package:cso_client_flutter/src/csoqueue/queue_interface.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+import 'package:cso_client_flutter/src/message/readyticket.dart';
+import 'package:cso_client_flutter/src/message/result.dart';
+import 'package:cso_client_flutter/src/message/type.dart';
 
 class Connector implements IConnector {
   bool _isActivated;
@@ -37,11 +36,11 @@ class Connector implements IConnector {
         _proxy = Proxy(conf);
 
   Connector(
-    int bufferSize,
-    IQueue queue,
-    IParser parser,
-    IProxy proxy,
-  )   : _isActivated = false,
+    int bufferSize, {
+    required IQueue queue,
+    required IParser parser,
+    required Proxy proxy,
+  })   : _isActivated = false,
         _counter = null,
         _conn = Connection(),
         _queueMessages = queue,

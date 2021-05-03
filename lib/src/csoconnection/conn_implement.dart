@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:cso_client_flutter/csoconnection/conn_interface.dart';
-import 'package:cso_client_flutter/csoconnection/conn_status.dart';
-import 'package:cso_client_flutter/message/define.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+
+import 'conn_interface.dart';
+import 'conn_status.dart';
 
 class Connection implements IConnection {
   // HeaderSize is size of header

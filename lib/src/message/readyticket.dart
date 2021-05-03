@@ -1,10 +1,7 @@
-import 'dart:ffi';
-
 import 'dart:typed_data';
 
-import 'package:cso_client_flutter/message/result.dart';
-
-import 'define.dart';
+import 'package:cso_client_flutter/src/message/define.dart';
+import 'package:cso_client_flutter/src/message/result.dart';
 
 class ReadyTicket {
   final bool _isReady;
