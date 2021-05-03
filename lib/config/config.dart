@@ -34,13 +34,13 @@ class Config implements IConfig {
     final jsonData = await rootBundle
         .loadString(filePath)
         .then((fileContents) => json.decode(fileContents));
-    return Future.value(Config(
+    return Config(
       projectID: jsonData["pid"],
       projectToken: jsonData["ptoken"],
       connName: jsonData["cname"],
       csoPublicKey: jsonData["csopubkey"],
       csoAddress: jsonData["csoaddr"],
-    ));
+    );
   }
 
   String getProjectID() {

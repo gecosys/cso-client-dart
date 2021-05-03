@@ -10,7 +10,7 @@ class MessageType {
   static parse(int value) {
     switch (value) {
       case 0x02:
-        return MessageType.activattion;
+        return MessageType.activation;
       case 0x03:
         return MessageType.single;
       case 0x04:
@@ -27,10 +27,22 @@ class MessageType {
   }
 
   static const unknown = const MessageType._internal(0x00);
-  static const activattion = const MessageType._internal(0x02);
+
+  // Activation is type of activation message
+  static const activation = const MessageType._internal(0x02);
+
+  // Single is type of single message (message sent to another connection)
   static const single = const MessageType._internal(0x03);
+
+  // Group is type of group message (message sent to a group of connections)
   static const group = const MessageType._internal(0x04);
+
+  // SingleCached is type of single message (message sent to another connection and cached on system)
   static const singleCached = const MessageType._internal(0x05);
+
+  // GroupCached is type of group message (message sent to a group of connections and cached on system)
   static const groupCached = const MessageType._internal(0x06);
+
+  // Done is type of done message
   static const done = const MessageType._internal(0x07);
 }

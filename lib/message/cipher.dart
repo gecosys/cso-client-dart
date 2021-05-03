@@ -62,6 +62,22 @@ class Cipher {
         _authenTag = authenTag,
         _sign = sign;
 
+  void setData(List<int> data) {
+    this._data = data;
+  }
+
+  void setIsEncrypted(bool isEncrypted) {
+    this._isEncrypted = isEncrypted;
+  }
+
+  void setIV(List<int> iv) {
+    this._iv = iv;
+  }
+
+  void setAuthenTag(List<int> authenTag) {
+    this._authenTag = authenTag;
+  }
+
   BigInt getMsgID() {
     return BigInt.from(this._msgID).toUnsigned(64);
   }

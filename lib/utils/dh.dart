@@ -32,6 +32,6 @@ class DH {
   ) async {
     final sharedKey = serverPubKey.modPow(clientPrivKey, nKey);
     final secretKey = await Sha256().hash(sharedKey.toString().codeUnits);
-    return Future.value(secretKey.bytes);
+    return secretKey.bytes;
   }
 }

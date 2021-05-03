@@ -7,7 +7,7 @@ class HMAC {
       data,
       secretKey: SecretKey(key),
     );
-    return Future.value(mac.bytes);
+    return mac.bytes;
   }
 
   static Future<bool> validateHMAC(
@@ -16,7 +16,7 @@ class HMAC {
     List<int> expectedHMAC,
   ) async {
     if (expectedHMAC.length != 32) {
-      return Future.value(false);
+      return false;
     }
     final hmac = await HMAC.calcHMAC(key, data);
     for (var idx = 0; idx < 32; ++idx) {
@@ -24,6 +24,6 @@ class HMAC {
         return false;
       }
     }
-    return Future.value(true);
+    return true;
   }
 }

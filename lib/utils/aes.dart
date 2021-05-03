@@ -40,6 +40,6 @@ class AES {
       secretKey: SecretKey(key),
       aad: aad,
     );
-    return Future.value(msg);
+    return msg;
   }
 }

@@ -33,11 +33,9 @@ class Proxy implements IProxy {
     // Parse response
     final resp = Response.fromJson(json.decode(httpResp.body));
     if (resp.getReturnCode() != 1 || resp.getData() == null) {
-      return Future.value(
-        Result(
-          errorCode: ErrorCode.errorMessage,
-          data: ServerKey.initDefault(),
-        ),
+      return Result(
+        errorCode: ErrorCode.errorMessage,
+        data: ServerKey.initDefault(),
       );
     }
     final respExchangeKey = RespExchangeKey.fromJson(resp.getData());
@@ -62,23 +60,19 @@ class Proxy implements IProxy {
       buffer,
     );
     if (isValid == false) {
-      return Future.value(
-        Result(
-          errorCode: ErrorCode.invalidSignature,
-          data: ServerKey.initDefault(),
-        ),
+      return Result(
+        errorCode: ErrorCode.invalidSignature,
+        data: ServerKey.initDefault(),
       );
     }
 
     // Parse DH keys to BigInt
-    return Future.value(
-      Result(
-        errorCode: ErrorCode.success,
-        data: ServerKey(
-          gKey: BigInt.parse(respExchangeKey.getGKey()),
-          nKey: BigInt.parse(respExchangeKey.getNKey()),
-          pubKey: BigInt.parse(respExchangeKey.getPubKey()),
-        ),
+    return Result(
+      errorCode: ErrorCode.success,
+      data: ServerKey(
+        gKey: BigInt.parse(respExchangeKey.getGKey()),
+        nKey: BigInt.parse(respExchangeKey.getNKey()),
+        pubKey: BigInt.parse(respExchangeKey.getPubKey()),
       ),
     );
   }
@@ -136,11 +130,9 @@ class Proxy implements IProxy {
     // Parse response
     final resp = Response.fromJson(json.decode(httpResp.body));
     if (resp.getReturnCode() != 1 || resp.getData() == null) {
-      return Future.value(
-        Result(
-          errorCode: ErrorCode.errorMessage,
-          data: ServerTicket.initDefault(),
-        ),
+      return Result(
+        errorCode: ErrorCode.errorMessage,
+        data: ServerTicket.initDefault(),
       );
     }
     final respRegisterConnection = RespRegisterConnection.fromJson(
@@ -183,23 +175,19 @@ class Proxy implements IProxy {
     // Build ticket bytes
     final ticketBytes = Ticket.buildBytes(valTicketID.toInt(), ticketToken);
     if (ticketBytes.errorCode != ErrorCode.success) {
-      return Future.value(
-        Result(
-          errorCode: ticketBytes.errorCode,
-          data: ServerTicket.initDefault(),
-        ),
+      return Result(
+        errorCode: ticketBytes.errorCode,
+        data: ServerTicket.initDefault(),
       );
     }
 
-    return Future.value(
-      Result(
-        errorCode: ErrorCode.success,
-        data: ServerTicket(
-          hubAddress: respRegisterConnection.getHubAddress(),
-          ticketID: valTicketID.toInt(),
-          ticketBytes: ticketBytes.data,
-          serverSecretKey: serverSecretKey,
-        ),
+    return Result(
+      errorCode: ErrorCode.success,
+      data: ServerTicket(
+        hubAddress: respRegisterConnection.getHubAddress(),
+        ticketID: valTicketID.toInt(),
+        ticketBytes: ticketBytes.data,
+        serverSecretKey: serverSecretKey,
       ),
     );
   }

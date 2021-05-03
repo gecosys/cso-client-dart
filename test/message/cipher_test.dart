@@ -732,7 +732,7 @@ void runCases(
 ) {
   var isEncrypted = true;
   var msgTypes = [
-    MessageType.activattion,
+    MessageType.activation,
     MessageType.single,
     MessageType.group,
     MessageType.singleCached,
