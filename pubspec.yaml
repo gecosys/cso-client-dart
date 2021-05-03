@@ -1,7 +1,6 @@
 name: gecosys_cso_client
 description: A library for connecting to the Cloud Socket system.
 version: 1.0.0
-author: Tri Dao <minhtri1396@gmail.com>
 homepage: https://cso.goldeneyetech.com.vn
 repository: https://github.com/gecosys/cso-client-dart
 
@@ -9,11 +8,11 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
+  flutter:
+    sdk: flutter
   http: ^0.13.2
   cryptography: ^2.0.1 # RsaPkcs1v15 (Web Cryptography only)
 
 dev_dependencies:
-  flutter:
-    sdk: flutter
   flutter_test:
     sdk: flutter
