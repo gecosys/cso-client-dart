@@ -1,4 +1,4 @@
-import 'package:cso_client_flutter/src/utils/dh.dart';
+import 'package:gecosys_cso_client/src/utils/dh.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

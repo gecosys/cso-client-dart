@@ -1,4 +1,4 @@
-import 'package:cso_client_flutter/src/utils/hmac.dart';
+import 'package:gecosys_cso_client/src/utils/hmac.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cryptography/cryptography.dart';
 
