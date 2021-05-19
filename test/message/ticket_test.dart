@@ -79,7 +79,7 @@ void main() {
 
     var ticket = Ticket.parseBytes(Uint8List.fromList(input).buffer);
     expect(ticket.errorCode, ErrorCode.success);
-    expect(ticket.data.getID(), BigInt.from(65535).toUnsigned(16));
-    expect(ticket.data.getToken(), expectedToken);
+    expect(ticket.data.id, BigInt.from(65535).toUnsigned(16));
+    expect(ticket.data.token, expectedToken);
   });
 }

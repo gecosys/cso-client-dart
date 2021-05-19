@@ -12,9 +12,7 @@ import '../utils/hmac.dart';
 class Parser implements IParser {
   List<int> _secretKey = [];
 
-  void setSecretKey(List<int> secretKey) {
-    this._secretKey = secretKey;
-  }
+  set secretKey(List<int> value) => _secretKey = value;
 
   Future<Result<Cipher>> parseReceivedMessage(List<int> content) async {
     final msg = Cipher.parseBytes(Uint8List.fromList(content).buffer);
@@ -22,7 +20,7 @@ class Parser implements IParser {
       return Result(errorCode: msg.errorCode, data: Cipher.initDefault());
     }
 
-    if (msg.data.getIsEncrypted() == false) {
+    if (msg.data.isEncrypted == false) {
       final rawBytes = msg.data.getRawBytes();
       if (rawBytes.errorCode != ErrorCode.success) {
         return Result(
@@ -31,7 +29,7 @@ class Parser implements IParser {
       final isValid = await HMAC.validateHMAC(
         this._secretKey,
         rawBytes.data,
-        msg.data.getSign(),
+        msg.data.sign,
       );
       if (isValid == false) {
         return Result(
@@ -47,16 +45,16 @@ class Parser implements IParser {
       return Result(errorCode: aad.errorCode, data: Cipher.initDefault());
     }
 
-    msg.data.setData(await AES.decrypt(
+    msg.data.data = await AES.decrypt(
       this._secretKey,
-      msg.data.getIV(),
-      msg.data.getAuthenTag(),
-      msg.data.getData(),
+      msg.data.iv,
+      msg.data.authenTag,
+      msg.data.data,
       aad.data,
-    ));
-    msg.data.setIsEncrypted(false);
-    msg.data.setIV([]);
-    msg.data.setAuthenTag([]);
+    );
+    msg.data.isEncrypted = false;
+    msg.data.iv = [];
+    msg.data.authenTag = [];
     return msg;
   }
 

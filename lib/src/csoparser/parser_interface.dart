@@ -2,7 +2,8 @@ import '../message/cipher.dart';
 import '../message/result.dart';
 
 abstract class IParser {
-  void setSecretKey(List<int> secretKey);
+  set secretKey(List<int> value);
+
   Future<Result<Cipher>> parseReceivedMessage(List<int> content);
   Future<Result<List<int>>> buildActivateMessage(
     int ticketID,

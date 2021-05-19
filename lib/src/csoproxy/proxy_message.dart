@@ -17,17 +17,9 @@ class ServerKey {
         _nKey = nKey,
         _pubKey = pubKey;
 
-  BigInt getGKey() {
-    return this._gKey;
-  }
-
-  BigInt getNKey() {
-    return this._nKey;
-  }
-
-  BigInt getPubKey() {
-    return this._pubKey;
-  }
+  BigInt get gKey => _gKey;
+  BigInt get nKey => _nKey;
+  BigInt get pubKey => _pubKey;
 }
 
 // ServerTicket is an activation ticket from the Hub server
@@ -53,21 +45,10 @@ class ServerTicket {
         _ticketBytes = ticketBytes,
         _serverSecretKey = serverSecretKey;
 
-  String getHubAddress() {
-    return this._hubAddress;
-  }
-
-  BigInt getTicketID() {
-    return BigInt.from(this._ticketID).toUnsigned(16);
-  }
-
-  List<int> getTicketBytes() {
-    return this._ticketBytes;
-  }
-
-  List<int> getServerSecretKey() {
-    return this._serverSecretKey;
-  }
+  String get hubAddress => _hubAddress;
+  BigInt get ticketID => BigInt.from(this._ticketID).toUnsigned(16);
+  List<int> get ticketBytes => _ticketBytes;
+  List<int> get serverSecretKey => _serverSecretKey;
 }
 
 // Response is format message of HTTP response from the Proxy server
@@ -83,17 +64,9 @@ class Response {
         ).toUnsigned(64).toInt(),
         _data = json['data'];
 
-  int getReturnCode() {
-    return this._returnCode;
-  }
-
-  BigInt getTimestamp() {
-    return BigInt.from(this._timestamp).toUnsigned(64);
-  }
-
-  dynamic getData() {
-    return this._data;
-  }
+  int get returnCode => _returnCode;
+  BigInt get timestamp => BigInt.from(this._timestamp).toUnsigned(64);
+  dynamic get data => _data;
 }
 
 // RespExchangeKey is response of exchange-key API from the Proxy server
@@ -109,21 +82,10 @@ class RespExchangeKey {
         _pubKey = json['pub_key'] ?? '0',
         _sign = json['sign'] ?? '';
 
-  String getGKey() {
-    return this._gKey;
-  }
-
-  String getNKey() {
-    return this._nKey;
-  }
-
-  String getPubKey() {
-    return this._pubKey;
-  }
-
-  String getSign() {
-    return this._sign;
-  }
+  String get gKey => _gKey;
+  String get nKey => _nKey;
+  String get pubKey => _pubKey;
+  String get sign => _sign;
 }
 
 // RespRegisterConnection is response of register-connection API from the Proxy server
@@ -143,27 +105,10 @@ class RespRegisterConnection {
         _iv = json['iv'] ?? '',
         _authenTag = json['auth_tag'] ?? '';
 
-  String getHubAddress() {
-    return this._hubAddress;
-  }
-
-  BigInt getTicketID() {
-    return BigInt.from(this._ticketID).toUnsigned(16);
-  }
-
-  String getTicketToken() {
-    return this._ticketToken;
-  }
-
-  String getPubKey() {
-    return this._pubKey;
-  }
-
-  String getIV() {
-    return this._iv;
-  }
-
-  String getAuthenTag() {
-    return this._authenTag;
-  }
+  String get hubAddress => _hubAddress;
+  BigInt get ticketID => BigInt.from(this._ticketID).toUnsigned(16);
+  String get ticketToken => _ticketToken;
+  String get pubKey => _pubKey;
+  String get iv => _iv;
+  String get authenTag => _authenTag;
 }

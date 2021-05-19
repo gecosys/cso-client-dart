@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
 abstract class IConfig {
-  String getProjectID();
-  String getProjectToken();
-  String getConnectionName();
-  String getCSOPublicKey();
-  String getCSOAddress();
+  String get projectID;
+  String get projectToken;
+  String get connName;
+  String get csoPublicKey;
+  String get csoAddress;
 }
 
 class Config implements IConfig {
@@ -42,23 +42,9 @@ class Config implements IConfig {
     );
   }
 
-  String getProjectID() {
-    return this._projectID;
-  }
-
-  String getProjectToken() {
-    return this._projectToken;
-  }
-
-  String getConnectionName() {
-    return this._connName;
-  }
-
-  String getCSOPublicKey() {
-    return this._csoPublicKey;
-  }
-
-  String getCSOAddress() {
-    return this._csoAddress;
-  }
+  String get projectID => _projectID;
+  String get projectToken => _projectToken;
+  String get connName => _connName;
+  String get csoPublicKey => _csoPublicKey;
+  String get csoAddress => _csoAddress;
 }

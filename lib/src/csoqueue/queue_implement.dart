@@ -34,12 +34,12 @@ class Queue implements IQueue {
       if (item == null) {
         continue;
       }
-      if (nextItem == null && (now - item.getTimestamp()) >= limitSecond) {
+      if (nextItem == null && (now - item.timestamp) >= limitSecond) {
         nextItem = item;
-        item.setTimestamp(now.toInt());
-        item.setNumberRetry(item.getNumberRetry() - 1);
+        item.timestamp = now;
+        item.numberRetry = item.numberRetry - 1;
       }
-      if (item.getNumberRetry() == 0) {
+      if (item.numberRetry == 0) {
         this._items[idx] = null;
         --this._len;
       }
@@ -50,7 +50,7 @@ class Queue implements IQueue {
   void clearMessage(BigInt msgID) {
     for (var idx = 0; idx < this._cap; ++idx) {
       final item = this._items[idx];
-      if (item != null && item.getMsgID() == msgID) {
+      if (item != null && item.msgID == msgID) {
         this._items[idx] = null;
         --this._len;
       }

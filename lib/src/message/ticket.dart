@@ -17,13 +17,8 @@ class Ticket {
   })   : _id = id,
         _token = token;
 
-  BigInt getID() {
-    return BigInt.from(this._id).toUnsigned(16);
-  }
-
-  List<int> getToken() {
-    return this._token;
-  }
+  BigInt get id => BigInt.from(this._id).toUnsigned(16);
+  List<int> get token => _token;
 
   // ParseBytes converts bytes to Ticket
   // ID: 2 bytes

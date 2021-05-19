@@ -25,7 +25,7 @@ void main() async {
   });
 
   // Send a message to the connection itself every 1 second
-  loopSendMessage(config.getConnectionName(), connector);
+  loopSendMessage(config.connName, connector);
 }
 
 void loopSendMessage(String receiver, IConnector connector) {

@@ -31,17 +31,17 @@ void main() {
     ]);
     var result = ReadyTicket.parseBytes(input.buffer);
     expect(result.errorCode, ErrorCode.success);
-    expect(result.data.getIsReady(), true);
+    expect(result.data.isReady, true);
     expect(
-      result.data.getIdxRead(),
+      result.data.idxRead,
       BigInt.parse("18446744073709551615").toUnsigned(64),
     );
     expect(
-      result.data.getMaskRead(),
+      result.data.maskRead,
       BigInt.from(4294967295).toUnsigned(32),
     );
     expect(
-      result.data.getIdxWrite(),
+      result.data.idxWrite,
       BigInt.parse("18446744073709551614").toUnsigned(64),
     );
 
@@ -70,17 +70,17 @@ void main() {
     ]);
     result = ReadyTicket.parseBytes(input.buffer);
     expect(result.errorCode, ErrorCode.success);
-    expect(result.data.getIsReady(), false);
+    expect(result.data.isReady, false);
     expect(
-      result.data.getIdxRead(),
+      result.data.idxRead,
       BigInt.parse("18446744073709551614").toUnsigned(64),
     );
     expect(
-      result.data.getMaskRead(),
+      result.data.maskRead,
       BigInt.from(4294967295).toUnsigned(32),
     );
     expect(
-      result.data.getIdxWrite(),
+      result.data.idxWrite,
       BigInt.parse("18446744073709551615").toUnsigned(64),
     );
   });

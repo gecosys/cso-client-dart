@@ -278,25 +278,25 @@ void testIntoBytes() {
 
     var parsedCipher = Cipher.parseBytes(Uint8List.fromList(bytes.data).buffer);
     expect(parsedCipher.errorCode, ErrorCode.success);
-    expect(parsedCipher.data.getIsEncrypted(), isEncrypted);
-    expect(parsedCipher.data.getIsFirst(), isFirst);
-    expect(parsedCipher.data.getIsLast(), isLast);
-    expect(parsedCipher.data.getIsRequest(), isRequest);
+    expect(parsedCipher.data.isEncrypted, isEncrypted);
+    expect(parsedCipher.data.isFirst, isFirst);
+    expect(parsedCipher.data.isLast, isLast);
+    expect(parsedCipher.data.isRequest, isRequest);
     expect(
-      parsedCipher.data.getMsgID(),
+      parsedCipher.data.msgID,
       BigInt.from(msgID).toUnsigned(64),
     );
     expect(
-      parsedCipher.data.getMsgTag(),
+      parsedCipher.data.msgTag,
       BigInt.from(msgTag).toUnsigned(64),
     );
-    expect(parsedCipher.data.getMsgType(), msgType);
-    expect(parsedCipher.data.getName(), gConnName);
-    if (parsedCipher.data.getIsEncrypted()) {
-      expect(parsedCipher.data.getIV(), iv);
-      expect(parsedCipher.data.getAuthenTag(), authenTag);
+    expect(parsedCipher.data.msgType, msgType);
+    expect(parsedCipher.data.name, gConnName);
+    if (parsedCipher.data.isEncrypted) {
+      expect(parsedCipher.data.iv, iv);
+      expect(parsedCipher.data.authenTag, authenTag);
     } else {
-      expect(parsedCipher.data.getSign(), sign);
+      expect(parsedCipher.data.sign, sign);
     }
 
     // var aad = cipher.getAad();
@@ -486,27 +486,27 @@ void testParseCipherBytes() {
   ];
   var cipher = Cipher.parseBytes(Uint8List.fromList(input).buffer);
   expect(cipher.errorCode, ErrorCode.success);
-  expect(cipher.data.getIsEncrypted(), expectedIsEncrypted);
-  expect(cipher.data.getIsFirst(), expectedIsFirst);
-  expect(cipher.data.getIsLast(), expectedIsLast);
-  expect(cipher.data.getIsRequest(), expectedIsRequest);
+  expect(cipher.data.isEncrypted, expectedIsEncrypted);
+  expect(cipher.data.isFirst, expectedIsFirst);
+  expect(cipher.data.isLast, expectedIsLast);
+  expect(cipher.data.isRequest, expectedIsRequest);
   expect(
-    cipher.data.getMsgID(),
+    cipher.data.msgID,
     BigInt.from(expectedMessageID).toUnsigned(64),
   );
   expect(
-    cipher.data.getMsgTag(),
+    cipher.data.msgTag,
     BigInt.from(expectedMessageTag).toUnsigned(64),
   );
-  expect(cipher.data.getMsgType(), expectedMessageType);
-  expect(cipher.data.getName(), expectedName);
-  expect(cipher.data.getIV(), expectedIV);
-  expect(cipher.data.getAuthenTag(), expectedAuthenTag);
+  expect(cipher.data.msgType, expectedMessageType);
+  expect(cipher.data.name, expectedName);
+  expect(cipher.data.iv, expectedIV);
+  expect(cipher.data.authenTag, expectedAuthenTag);
 
   var aad = cipher.data.getAad();
   expect(aad.errorCode, ErrorCode.success);
   expect(aad.data, expectedAad);
-  expect(cipher.data.getData(), expectedData);
+  expect(cipher.data.data, expectedData);
 }
 
 void testParseNoCipherBytes() {
@@ -694,26 +694,26 @@ void testParseNoCipherBytes() {
 
   var cipher = Cipher.parseBytes(Uint8List.fromList(input).buffer);
   expect(cipher.errorCode, ErrorCode.success);
-  expect(cipher.data.getIsEncrypted(), expectedIsEncrypted);
-  expect(cipher.data.getIsFirst(), expectedIsFirst);
-  expect(cipher.data.getIsLast(), expectedIsLast);
-  expect(cipher.data.getIsRequest(), expectedIsRequest);
+  expect(cipher.data.isEncrypted, expectedIsEncrypted);
+  expect(cipher.data.isFirst, expectedIsFirst);
+  expect(cipher.data.isLast, expectedIsLast);
+  expect(cipher.data.isRequest, expectedIsRequest);
   expect(
-    cipher.data.getMsgID(),
+    cipher.data.msgID,
     BigInt.from(expectedMessageID).toUnsigned(64),
   );
   expect(
-    cipher.data.getMsgTag(),
+    cipher.data.msgTag,
     BigInt.from(expectedMessageTag).toUnsigned(64),
   );
-  expect(cipher.data.getMsgType(), expectedMessageType);
-  expect(cipher.data.getName(), expectedName);
-  expect(cipher.data.getSign(), expectedSign);
+  expect(cipher.data.msgType, expectedMessageType);
+  expect(cipher.data.name, expectedName);
+  expect(cipher.data.sign, expectedSign);
 
   var aad = cipher.data.getAad();
   expect(aad.errorCode, ErrorCode.success);
   expect(aad.data, expectedAad);
-  expect(cipher.data.getData(), expectedData);
+  expect(cipher.data.data, expectedData);
 }
 
 void runCases(

@@ -10,8 +10,8 @@ class ItemQueue {
   final bool _isLast;
   final bool _isRequest;
   final bool _isGroup;
-  int _numberRetry;
   int _timestamp;
+  int numberRetry;
 
   ItemQueue({
     required int msgID,
@@ -36,62 +36,23 @@ class ItemQueue {
         _isLast = isLast,
         _isRequest = isRequest,
         _isGroup = isGroup,
-        _numberRetry = numberRetry,
+        this.numberRetry = numberRetry,
         _timestamp = timestamp;
 
-  void setNumberRetry(int numberRetry) {
-    this._numberRetry = numberRetry;
-  }
+  set timestamp(BigInt value) => _timestamp = value.toInt();
 
-  void setTimestamp(int timestamp) {
-    this._timestamp = timestamp;
-  }
+  BigInt get msgID => BigInt.from(this._msgID).toUnsigned(64);
+  BigInt get msgTag => BigInt.from(this._msgTag).toUnsigned(64);
 
-  BigInt getMsgID() {
-    return BigInt.from(this._msgID).toUnsigned(64);
-  }
+  String get recvName => _recvName;
+  List<int> get content => _content;
 
-  BigInt getMsgTag() {
-    return BigInt.from(this._msgTag).toUnsigned(64);
-  }
+  bool get isEncrypted => _isEncrypted;
+  bool get isCached => _isCached;
+  bool get isFirst => _isFirst;
+  bool get isLast => _isLast;
+  bool get isRequest => _isRequest;
+  bool get isGroup => _isGroup;
 
-  String getRecvName() {
-    return this._recvName;
-  }
-
-  List<int> getContent() {
-    return this._content;
-  }
-
-  bool getIsEncrypted() {
-    return this._isEncrypted;
-  }
-
-  bool getIsCached() {
-    return this._isCached;
-  }
-
-  bool getIsFirst() {
-    return this._isFirst;
-  }
-
-  bool getIsLast() {
-    return this._isLast;
-  }
-
-  bool getIsRequest() {
-    return this._isRequest;
-  }
-
-  bool getIsGroup() {
-    return this._isGroup;
-  }
-
-  int getNumberRetry() {
-    return this._numberRetry;
-  }
-
-  BigInt getTimestamp() {
-    return BigInt.from(this._timestamp).toUnsigned(64);
-  }
+  BigInt get timestamp => BigInt.from(this._timestamp).toUnsigned(64);
 }

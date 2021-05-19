@@ -173,14 +173,14 @@ class Connector implements IConnector {
       this._isActivated = false;
       this._loopActivateConnection(
         isDisconnected,
-        serverTicket.data.getTicketID().toInt(),
-        serverTicket.data.getTicketBytes(),
+        serverTicket.data.ticketID.toInt(),
+        serverTicket.data.ticketBytes,
       );
 
       // Connect to Cloud Socket system
-      this._parser.setSecretKey(serverTicket.data.getServerSecretKey());
+      this._parser.secretKey = serverTicket.data.serverSecretKey;
       this._conn.listen(
-            serverTicket.data.getHubAddress(),
+            serverTicket.data.hubAddress,
             onMessage: (msg) => this._processMessage(msg, cb),
             onDisconnected: () {
               isDisconnected[0] = true;
@@ -216,29 +216,29 @@ class Connector implements IConnector {
         errorCode: ErrorCode.errorMessage,
         data: List<int>.empty(),
       );
-      if (itemQueue.getIsGroup()) {
+      if (itemQueue.isGroup) {
         content = await this._parser.buildGroupMessage(
-              itemQueue.getMsgID().toInt(),
-              itemQueue.getMsgTag().toInt(),
-              itemQueue.getRecvName(),
-              itemQueue.getContent(),
-              itemQueue.getIsEncrypted(),
-              itemQueue.getIsCached(),
-              itemQueue.getIsFirst(),
-              itemQueue.getIsLast(),
-              itemQueue.getIsRequest(),
+              itemQueue.msgID.toInt(),
+              itemQueue.msgTag.toInt(),
+              itemQueue.recvName,
+              itemQueue.content,
+              itemQueue.isEncrypted,
+              itemQueue.isCached,
+              itemQueue.isFirst,
+              itemQueue.isLast,
+              itemQueue.isRequest,
             );
       } else {
         content = await this._parser.buildMessage(
-              itemQueue.getMsgID().toInt(),
-              itemQueue.getMsgTag().toInt(),
-              itemQueue.getRecvName(),
-              itemQueue.getContent(),
-              itemQueue.getIsEncrypted(),
-              itemQueue.getIsCached(),
-              itemQueue.getIsFirst(),
-              itemQueue.getIsLast(),
-              itemQueue.getIsRequest(),
+              itemQueue.msgID.toInt(),
+              itemQueue.msgTag.toInt(),
+              itemQueue.recvName,
+              itemQueue.content,
+              itemQueue.isEncrypted,
+              itemQueue.isCached,
+              itemQueue.isFirst,
+              itemQueue.isLast,
+              itemQueue.isRequest,
             );
       }
       if (content.errorCode == ErrorCode.success) {
@@ -301,21 +301,21 @@ class Connector implements IConnector {
     }
     final msgData = msg.data;
 
-    final msgType = msgData.getMsgType();
+    final msgType = msgData.msgType;
     if (msgType == MessageType.activation) {
       final readyTicket = ReadyTicket.parseBytes(
-        Uint8List.fromList(msgData.getData()).buffer,
+        Uint8List.fromList(msgData.data).buffer,
       );
       if (readyTicket.errorCode != ErrorCode.success ||
-          !readyTicket.data.getIsReady()) {
+          !readyTicket.data.isReady) {
         return;
       }
       this._isActivated = true;
       if (this._counter == null) {
         this._counter = Counter(
-          writeIndex: readyTicket.data.getIdxWrite(),
-          minReadIdx: readyTicket.data.getIdxRead(),
-          maskReadBits: readyTicket.data.getMaskRead().toInt(),
+          writeIndex: readyTicket.data.idxWrite,
+          minReadIdx: readyTicket.data.idxRead,
+          maskReadBits: readyTicket.data.maskRead.toInt(),
         );
       }
       return;
@@ -333,33 +333,33 @@ class Connector implements IConnector {
       }
     }
 
-    if (msgData.getMsgID() == BigInt.zero) {
-      if (msgData.getIsRequest()) {
-        await cb(msgData.getName(), msgData.getData());
+    if (msgData.msgID == BigInt.zero) {
+      if (msgData.isRequest) {
+        await cb(msgData.name, msgData.data);
       }
       return;
     }
 
-    if (msgData.getIsRequest() == false) {
+    if (msgData.isRequest == false) {
       // response
-      this._queueMessages.clearMessage(msgData.getMsgID());
+      this._queueMessages.clearMessage(msgData.msgID);
       return;
     }
 
-    if (this._counter?.markReadDone(msgData.getMsgTag()) ?? false) {
-      final errCode = await cb(msgData.getName(), msgData.getData());
+    if (this._counter?.markReadDone(msgData.msgTag) ?? false) {
+      final errCode = await cb(msgData.name, msgData.data);
       if (errCode != ErrorCode.success) {
-        this._counter?.markReadUnused(msgData.getMsgTag());
+        this._counter?.markReadUnused(msgData.msgTag);
         return;
       }
     }
 
     this._sendResponse(
-      msgData.getMsgID(),
-      msgData.getMsgTag(),
-      msgData.getName(),
+      msgData.msgID,
+      msgData.msgTag,
+      msgData.name,
       List.empty(),
-      msgData.getIsEncrypted(),
+      msgData.isEncrypted,
     );
   }
 }

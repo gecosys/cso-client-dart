@@ -14,12 +14,12 @@ class Cipher {
   bool _isFirst;
   bool _isLast;
   bool _isRequest;
-  bool _isEncrypted;
   String _name;
-  List<int> _iv;
-  List<int> _data;
-  List<int> _authenTag;
   List<int> _sign;
+  bool isEncrypted;
+  List<int> iv;
+  List<int> data;
+  List<int> authenTag;
 
   Cipher.initDefault()
       : _msgID = 0,
@@ -28,11 +28,11 @@ class Cipher {
         _isFirst = false,
         _isLast = false,
         _isRequest = false,
-        _isEncrypted = false,
+        isEncrypted = false,
         _name = "",
-        _iv = List.empty(),
-        _data = List.empty(),
-        _authenTag = List.empty(),
+        iv = List.empty(),
+        data = List.empty(),
+        authenTag = List.empty(),
         _sign = List.empty();
 
   Cipher({
@@ -54,79 +54,26 @@ class Cipher {
         _isFirst = isFirst,
         _isLast = isLast,
         _isRequest = isRequest,
-        _isEncrypted = isEncrypted,
+        this.isEncrypted = isEncrypted,
         _name = name,
-        _iv = iv,
-        _data = data,
-        _authenTag = authenTag,
+        this.iv = iv,
+        this.data = data,
+        this.authenTag = authenTag,
         _sign = sign;
 
-  void setData(List<int> data) {
-    this._data = data;
-  }
+  BigInt get msgID => BigInt.from(this._msgID).toUnsigned(64);
+  MessageType get msgType => _msgType;
+  BigInt get msgTag => BigInt.from(this._msgTag).toUnsigned(64);
 
-  void setIsEncrypted(bool isEncrypted) {
-    this._isEncrypted = isEncrypted;
-  }
+  bool get isFirst => _isFirst;
+  bool get isLast => _isLast;
+  bool get isRequest => _isRequest;
 
-  void setIV(List<int> iv) {
-    this._iv = iv;
-  }
-
-  void setAuthenTag(List<int> authenTag) {
-    this._authenTag = authenTag;
-  }
-
-  BigInt getMsgID() {
-    return BigInt.from(this._msgID).toUnsigned(64);
-  }
-
-  MessageType getMsgType() {
-    return this._msgType;
-  }
-
-  BigInt getMsgTag() {
-    return BigInt.from(this._msgTag).toUnsigned(64);
-  }
-
-  bool getIsFirst() {
-    return this._isFirst;
-  }
-
-  bool getIsLast() {
-    return this._isLast;
-  }
-
-  bool getIsRequest() {
-    return this._isRequest;
-  }
-
-  bool getIsEncrypted() {
-    return this._isEncrypted;
-  }
-
-  String getName() {
-    return this._name;
-  }
-
-  List<int> getIV() {
-    return this._iv;
-  }
-
-  List<int> getAuthenTag() {
-    return this._authenTag;
-  }
-
-  List<int> getData() {
-    return this._data;
-  }
-
-  List<int> getSign() {
-    return this._sign;
-  }
+  String get name => _name;
+  List<int> get sign => _sign;
 
   Result<List<int>> intoBytes() {
-    if (this._isEncrypted) {
+    if (this.isEncrypted) {
       return Cipher.buildCipherBytes(
         this._msgID,
         this._msgTag,
@@ -135,9 +82,9 @@ class Cipher {
         this._isLast,
         this._isRequest,
         this._name,
-        this._iv,
-        this._data,
-        this._authenTag,
+        this.iv,
+        this.data,
+        this.authenTag,
       );
     }
     return Cipher.buildNoCipherBytes(
@@ -148,7 +95,7 @@ class Cipher {
       this._isLast,
       this._isRequest,
       this._name,
-      this._data,
+      this.data,
       this._sign,
     );
   }
@@ -158,12 +105,12 @@ class Cipher {
       this._msgID,
       this._msgTag,
       this._msgType,
-      this._isEncrypted,
+      this.isEncrypted,
       this._isFirst,
       this._isLast,
       this._isRequest,
       this._name,
-      this._data,
+      this.data,
     );
   }
 
@@ -172,7 +119,7 @@ class Cipher {
       this._msgID,
       this._msgTag,
       this._msgType,
-      this._isEncrypted,
+      this.isEncrypted,
       this._isFirst,
       this._isLast,
       this._isRequest,

@@ -19,7 +19,7 @@ class Proxy implements IProxy {
   Proxy(IConfig conf) : _conf = conf;
 
   Future<Result<ServerKey>> exchangeKey() async {
-    final url = '${this._conf.getCSOAddress()}/exchange-key';
+    final url = '${this._conf.csoAddress}/exchange-key';
 
     final httpResp = await http.post(
       Uri.parse(url),
@@ -27,28 +27,28 @@ class Proxy implements IProxy {
         'Content-Type': 'application/json',
       },
       body: json.encode(<String, String>{
-        'project_id': this._conf.getProjectID(),
-        'unique_name': this._conf.getConnectionName(),
+        'project_id': this._conf.projectID,
+        'unique_name': this._conf.connName,
       }),
     );
 
     // Parse response
     final resp = Response.fromJson(json.decode(httpResp.body));
-    if (resp.getReturnCode() != 1 || resp.getData() == null) {
+    if (resp.returnCode != 1 || resp.data == null) {
       return Result(
         errorCode: ErrorCode.errorMessage,
         data: ServerKey.initDefault(),
       );
     }
-    final respExchangeKey = RespExchangeKey.fromJson(resp.getData());
+    final respExchangeKey = RespExchangeKey.fromJson(resp.data);
 
     // Parse signature base64
-    final sign = base64.decode(respExchangeKey.getSign());
+    final sign = base64.decode(respExchangeKey.sign);
 
     // Verify DH keys with the signature
-    final gKeyBytes = respExchangeKey.getGKey().codeUnits;
-    final nKeyBytes = respExchangeKey.getNKey().codeUnits;
-    final serverPubKeyBytes = respExchangeKey.getPubKey().codeUnits;
+    final gKeyBytes = respExchangeKey.gKey.codeUnits;
+    final nKeyBytes = respExchangeKey.nKey.codeUnits;
+    final serverPubKeyBytes = respExchangeKey.pubKey.codeUnits;
     final lenGKey = gKeyBytes.length;
     final lenGNKey = lenGKey + nKeyBytes.length;
     final lenBuffer = lenGNKey + serverPubKeyBytes.length;
@@ -57,7 +57,7 @@ class Proxy implements IProxy {
     buffer.setAll(lenGKey, nKeyBytes);
     buffer.setAll(lenGNKey, serverPubKeyBytes);
     final isValid = await RSA.verifySignature(
-      this._conf.getCSOPublicKey(),
+      this._conf.csoPublicKey,
       sign,
       buffer,
     );
@@ -72,9 +72,9 @@ class Proxy implements IProxy {
     return Result(
       errorCode: ErrorCode.success,
       data: ServerKey(
-        gKey: BigInt.parse(respExchangeKey.getGKey()),
-        nKey: BigInt.parse(respExchangeKey.getNKey()),
-        pubKey: BigInt.parse(respExchangeKey.getPubKey()),
+        gKey: BigInt.parse(respExchangeKey.gKey),
+        nKey: BigInt.parse(respExchangeKey.nKey),
+        pubKey: BigInt.parse(respExchangeKey.pubKey),
       ),
     );
   }
@@ -84,20 +84,20 @@ class Proxy implements IProxy {
 
     // Calculate secret key (AES-GCM)
     final clientPubKey = DH.calcPublicKey(
-      serverKey.getGKey(),
-      serverKey.getNKey(),
+      serverKey.gKey,
+      serverKey.nKey,
       clientPrivKey,
     );
     final clientSecretKey = await DH.calcSecretKey(
-      serverKey.getNKey(),
+      serverKey.nKey,
       clientPrivKey,
-      serverKey.getPubKey(),
+      serverKey.pubKey,
     );
 
     // Encrypt project's token by AES-GCM
-    final projectID = this._conf.getProjectID();
-    final connName = this._conf.getConnectionName();
-    final decodedToken = base64.decode(this._conf.getProjectToken());
+    final projectID = this._conf.projectID;
+    final connName = this._conf.connName;
+    final decodedToken = base64.decode(this._conf.projectToken);
     final strClientPubKey = clientPubKey.toString();
     final lenProjectID = projectID.length;
     final lenProjectIDConnName = lenProjectID + connName.length;
@@ -113,7 +113,7 @@ class Proxy implements IProxy {
     );
 
     // Invoke API
-    final url = '${this._conf.getCSOAddress()}/register-connection';
+    final url = '${this._conf.csoAddress}/register-connection';
     final httpResp = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -131,41 +131,41 @@ class Proxy implements IProxy {
 
     // Parse response
     final resp = Response.fromJson(json.decode(httpResp.body));
-    if (resp.getReturnCode() != 1 || resp.getData() == null) {
+    if (resp.returnCode != 1 || resp.data == null) {
       return Result(
         errorCode: ErrorCode.errorMessage,
         data: ServerTicket.initDefault(),
       );
     }
     final respRegisterConnection = RespRegisterConnection.fromJson(
-      resp.getData(),
+      resp.data,
     );
 
     // Decrypt ticket's token
-    final lenAadAddress = 2 + respRegisterConnection.getHubAddress().length;
+    final lenAadAddress = 2 + respRegisterConnection.hubAddress.length;
     final serverAad = List<int>.filled(
-      lenAadAddress + respRegisterConnection.getPubKey().length,
+      lenAadAddress + respRegisterConnection.pubKey.length,
       0,
       growable: false,
     );
-    final valTicketID = respRegisterConnection.getTicketID();
+    final valTicketID = respRegisterConnection.ticketID;
     serverAad[0] = valTicketID.toUnsigned(8).toInt();
     serverAad[1] = (valTicketID >> 8).toUnsigned(8).toInt();
-    serverAad.setAll(2, respRegisterConnection.getHubAddress().codeUnits);
+    serverAad.setAll(2, respRegisterConnection.hubAddress.codeUnits);
     serverAad.setAll(
-        lenAadAddress, respRegisterConnection.getPubKey().codeUnits);
+      lenAadAddress,
+      respRegisterConnection.pubKey.codeUnits,
+    );
 
-    final serverPubKey = BigInt.parse(respRegisterConnection.getPubKey());
+    final serverPubKey = BigInt.parse(respRegisterConnection.pubKey);
     final serverSecretKey = await DH.calcSecretKey(
-      serverKey.getNKey(),
+      serverKey.nKey,
       clientPrivKey,
       serverPubKey,
     );
-    final serverIV = base64.decode(respRegisterConnection.getIV());
-    final serverAuthenTag =
-        base64.decode(respRegisterConnection.getAuthenTag());
-    final serverTicketToken =
-        base64.decode(respRegisterConnection.getTicketToken());
+    final serverIV = base64.decode(respRegisterConnection.iv);
+    final serverAuthenTag = base64.decode(respRegisterConnection.authenTag);
+    final serverTicketToken = base64.decode(respRegisterConnection.ticketToken);
     final ticketToken = await AES.decrypt(
       serverSecretKey,
       serverIV,
@@ -186,7 +186,7 @@ class Proxy implements IProxy {
     return Result(
       errorCode: ErrorCode.success,
       data: ServerTicket(
-        hubAddress: respRegisterConnection.getHubAddress(),
+        hubAddress: respRegisterConnection.hubAddress,
         ticketID: valTicketID.toInt(),
         ticketBytes: ticketBytes.data,
         serverSecretKey: serverSecretKey,
