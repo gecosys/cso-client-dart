@@ -48,7 +48,7 @@ class Connector implements IConnector {
         _parser = parser,
         _proxy = proxy;
 
-  void listen(int cb(String sender, List<int> data)) {
+  void listen(Future<int> cb(String sender, List<int> data)) {
     this._loopReconnect(cb);
     this._loopRetrySendMessage();
   }
@@ -161,7 +161,7 @@ class Connector implements IConnector {
     return isSuccess ? ErrorCode.success : ErrorCode.errorQueueFull;
   }
 
-  void _loopReconnect(int cb(String sender, List<int> data)) {
+  void _loopReconnect(Future<int> cb(String sender, List<int> data)) {
     Future.delayed(const Duration(seconds: 1), () async {
       final serverTicket = await this._prepare();
       if (serverTicket.errorCode != ErrorCode.success) {
@@ -293,7 +293,7 @@ class Connector implements IConnector {
 
   void _processMessage(
     List<int> content,
-    int cb(String sender, List<int> data),
+    Future<int> cb(String sender, List<int> data),
   ) async {
     final msg = await this._parser.parseReceivedMessage(content);
     if (msg.errorCode != ErrorCode.success) {
@@ -335,7 +335,7 @@ class Connector implements IConnector {
 
     if (msgData.getMsgID() == BigInt.zero) {
       if (msgData.getIsRequest()) {
-        cb(msgData.getName(), msgData.getData());
+        await cb(msgData.getName(), msgData.getData());
       }
       return;
     }
@@ -347,7 +347,7 @@ class Connector implements IConnector {
     }
 
     if (this._counter?.markReadDone(msgData.getMsgTag()) ?? false) {
-      final errCode = cb(msgData.getName(), msgData.getData());
+      final errCode = await cb(msgData.getName(), msgData.getData());
       if (errCode != ErrorCode.success) {
         this._counter?.markReadUnused(msgData.getMsgTag());
         return;

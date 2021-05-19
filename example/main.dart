@@ -18,10 +18,10 @@ void main() async {
   final connector = Connector.initDefault(bufferSize, config);
 
   // Open a connection to the Cloud Socket system
-  connector.listen((sender, data) {
+  connector.listen((sender, data) async {
     print('Received message from $sender');
     print(utf8.decode(data));
-    return ErrorCode.success;
+    return Future.value(ErrorCode.success);
   });
 
   // Send a message to the connection itself every 1 second
