@@ -1,6 +1,6 @@
 name: gecosys_cso_client
 description: A library for connecting to the Cloud Socket system. Cloud Socket is a connection platform to manage connections and data routing between clients and servers in IoT projects. The platform is robust, flexible, and scalable to accommodate large-scale connections, while securing, queuing and preventing data from being lost on network or offline destination connection.
-version: 1.0.1
+version: 1.0.2
 homepage: https://cso.goldeneyetech.com.vn
 repository: https://github.com/gecosys/cso-client-dart
 
