@@ -21,7 +21,9 @@ import '../message/result.dart';
 import '../message/type.dart';
 
 class Connector implements IConnector {
-  bool _isActivated;
+  bool _isStopped = false;
+  bool _isRunning = false;
+  bool _isActivated = false;
   ICounter? _counter;
   IConnection _conn;
   IQueue _queueMessages;
@@ -29,8 +31,7 @@ class Connector implements IConnector {
   IProxy _proxy;
 
   Connector.initDefault(int bufferSize, IConfig conf)
-      : _isActivated = false,
-        _counter = null,
+      : _counter = null,
         _conn = Connection(),
         _queueMessages = Queue(cap: bufferSize),
         _parser = Parser(),
@@ -41,14 +42,25 @@ class Connector implements IConnector {
     required IQueue queue,
     required IParser parser,
     required Proxy proxy,
-  })   : _isActivated = false,
-        _counter = null,
+  })   : _counter = null,
         _conn = Connection(),
         _queueMessages = queue,
         _parser = parser,
         _proxy = proxy;
 
+  Future<void> close() async {
+    if (_isStopped) {
+      return;
+    }
+    _isStopped = true;
+    await this._conn.close();
+  }
+
   void listen(Future<int> cb(String sender, List<int> data)) {
+    if (_isRunning) {
+      return;
+    }
+    _isRunning = true;
     this._loopReconnect(cb);
     this._loopRetrySendMessage();
   }
@@ -59,7 +71,7 @@ class Connector implements IConnector {
     bool isEncrypted,
     bool isCached,
   ) async {
-    if (this._isActivated == false) {
+    if (this._isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
     final msg = await this._parser.buildMessage(
@@ -85,7 +97,7 @@ class Connector implements IConnector {
     bool isEncrypted,
     bool isCached,
   ) async {
-    if (this._isActivated == false) {
+    if (this._isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
     final msg = await this._parser.buildGroupMessage(
@@ -111,7 +123,7 @@ class Connector implements IConnector {
     bool isEncrypted,
     int numberRetry,
   ) async {
-    if (this._isActivated == false) {
+    if (this._isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
     final isSuccess = this._queueMessages.pushMessage(
@@ -139,7 +151,7 @@ class Connector implements IConnector {
     bool isEncrypted,
     int numberRetry,
   ) async {
-    if (this._isActivated == false) {
+    if (this._isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
     final isSuccess = this._queueMessages.pushMessage(
@@ -163,6 +175,9 @@ class Connector implements IConnector {
 
   void _loopReconnect(Future<int> cb(String sender, List<int> data)) {
     Future.delayed(const Duration(seconds: 1), () async {
+      if (_isStopped) {
+        return;
+      }
       final serverTicket = await this._prepare();
       if (serverTicket.errorCode != ErrorCode.success) {
         this._loopReconnect(cb);
@@ -196,7 +211,7 @@ class Connector implements IConnector {
     List<int> ticketBytes,
   ) {
     Future.delayed(const Duration(seconds: 1), () async {
-      if (isDisconnected[0] || this._isActivated) {
+      if (isDisconnected[0] || _isActivated || _isStopped) {
         return;
       }
       await this._activateConnection(ticketID, ticketBytes);
@@ -206,6 +221,9 @@ class Connector implements IConnector {
 
   void _loopRetrySendMessage() {
     Future.delayed(const Duration(milliseconds: 100), () async {
+      if (_isStopped) {
+        return;
+      }
       final itemQueue = this._queueMessages.nextMessage();
       if (itemQueue == null) {
         this._loopRetrySendMessage();

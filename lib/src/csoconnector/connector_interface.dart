@@ -1,4 +1,5 @@
 abstract class IConnector {
+  Future<void> close();
   void listen(Future<int> cb(String sender, List<int> data));
   Future<int> sendMessage(
     String recvName,

@@ -37,6 +37,10 @@ class Connection implements IConnection {
     return ErrorCode.success;
   }
 
+  Future<void> close() async {
+    await this._clienSocket?.close();
+  }
+
   Future<int> listen(
     String address, {
     required void onMessage(List<int> msg),
