@@ -53,7 +53,7 @@ class Connector implements IConnector {
       return;
     }
     _isStopped = true;
-    await this._conn.close();
+    await _conn.close();
   }
 
   void listen(Future<int> cb(String sender, List<int> data)) {
@@ -61,8 +61,8 @@ class Connector implements IConnector {
       return;
     }
     _isRunning = true;
-    this._loopReconnect(cb);
-    this._loopRetrySendMessage();
+    _loopReconnect(cb);
+    _loopRetrySendMessage();
   }
 
   Future<int> sendMessage(
@@ -71,24 +71,24 @@ class Connector implements IConnector {
     bool isEncrypted,
     bool isCached,
   ) async {
-    if (this._isActivated == false || _isStopped) {
+    if (_isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
-    final msg = await this._parser.buildMessage(
-          0,
-          0,
-          recvName,
-          content,
-          isEncrypted,
-          isCached,
-          true,
-          true,
-          true,
-        );
+    final msg = await _parser.buildMessage(
+      0,
+      0,
+      recvName,
+      content,
+      isEncrypted,
+      isCached,
+      true,
+      true,
+      true,
+    );
     if (msg.errorCode != ErrorCode.success) {
       return msg.errorCode;
     }
-    return this._conn.sendMessage(msg.data);
+    return _conn.sendMessage(msg.data);
   }
 
   Future<int> sendGroupMessage(
@@ -97,24 +97,24 @@ class Connector implements IConnector {
     bool isEncrypted,
     bool isCached,
   ) async {
-    if (this._isActivated == false || _isStopped) {
+    if (_isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
-    final msg = await this._parser.buildGroupMessage(
-          0,
-          0,
-          groupName,
-          content,
-          isEncrypted,
-          isCached,
-          true,
-          true,
-          true,
-        );
+    final msg = await _parser.buildGroupMessage(
+      0,
+      0,
+      groupName,
+      content,
+      isEncrypted,
+      isCached,
+      true,
+      true,
+      true,
+    );
     if (msg.errorCode != ErrorCode.success) {
       return msg.errorCode;
     }
-    return this._conn.sendMessage(msg.data);
+    return _conn.sendMessage(msg.data);
   }
 
   Future<int> sendMessageAndRetry(
@@ -123,25 +123,25 @@ class Connector implements IConnector {
     bool isEncrypted,
     int numberRetry,
   ) async {
-    if (this._isActivated == false || _isStopped) {
+    if (_isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
-    final isSuccess = this._queueMessages.pushMessage(
-          ItemQueue(
-            msgID: this._counter?.nextWriteIndex() ?? 0,
-            msgTag: 0,
-            recvName: recvName,
-            content: content,
-            isEncrypted: isEncrypted,
-            isCached: false,
-            isFirst: true,
-            isLast: true,
-            isRequest: true,
-            isGroup: false,
-            numberRetry: numberRetry + 1,
-            timestamp: 0,
-          ),
-        );
+    final isSuccess = _queueMessages.pushMessage(
+      ItemQueue(
+        msgID: _counter?.nextWriteIndex() ?? 0,
+        msgTag: 0,
+        recvName: recvName,
+        content: content,
+        isEncrypted: isEncrypted,
+        isCached: false,
+        isFirst: true,
+        isLast: true,
+        isRequest: true,
+        isGroup: false,
+        numberRetry: numberRetry + 1,
+        timestamp: 0,
+      ),
+    );
     return isSuccess ? ErrorCode.success : ErrorCode.errorQueueFull;
   }
 
@@ -151,25 +151,25 @@ class Connector implements IConnector {
     bool isEncrypted,
     int numberRetry,
   ) async {
-    if (this._isActivated == false || _isStopped) {
+    if (_isActivated == false || _isStopped) {
       return ErrorCode.errorConnection;
     }
-    final isSuccess = this._queueMessages.pushMessage(
-          ItemQueue(
-            msgID: this._counter?.nextWriteIndex() ?? 0,
-            msgTag: 0,
-            recvName: groupName,
-            content: content,
-            isEncrypted: isEncrypted,
-            isCached: false,
-            isFirst: true,
-            isLast: true,
-            isRequest: true,
-            isGroup: true,
-            numberRetry: numberRetry + 1,
-            timestamp: 0,
-          ),
-        );
+    final isSuccess = _queueMessages.pushMessage(
+      ItemQueue(
+        msgID: _counter?.nextWriteIndex() ?? 0,
+        msgTag: 0,
+        recvName: groupName,
+        content: content,
+        isEncrypted: isEncrypted,
+        isCached: false,
+        isFirst: true,
+        isLast: true,
+        isRequest: true,
+        isGroup: true,
+        numberRetry: numberRetry + 1,
+        timestamp: 0,
+      ),
+    );
     return isSuccess ? ErrorCode.success : ErrorCode.errorQueueFull;
   }
 
@@ -178,30 +178,30 @@ class Connector implements IConnector {
       if (_isStopped) {
         return;
       }
-      final serverTicket = await this._prepare();
+      final serverTicket = await _prepare();
       if (serverTicket.errorCode != ErrorCode.success) {
-        this._loopReconnect(cb);
+        _loopReconnect(cb);
         return;
       }
 
       var isDisconnected = [false]; // use list to use reference
-      this._isActivated = false;
-      this._loopActivateConnection(
+      _isActivated = false;
+      _loopActivateConnection(
         isDisconnected,
         serverTicket.data.ticketID.toInt(),
         serverTicket.data.ticketBytes,
       );
 
       // Connect to Cloud Socket system
-      this._parser.secretKey = serverTicket.data.serverSecretKey;
-      this._conn.listen(
-            serverTicket.data.hubAddress,
-            onMessage: (msg) => this._processMessage(msg, cb),
-            onDisconnected: () {
-              isDisconnected[0] = true;
-              this._loopReconnect(cb);
-            },
-          );
+      _parser.secretKey = serverTicket.data.serverSecretKey;
+      _conn.listen(
+        serverTicket.data.hubAddress,
+        onMessage: (msg) => _processMessage(msg, cb),
+        onDisconnected: () {
+          isDisconnected[0] = true;
+          _loopReconnect(cb);
+        },
+      );
     });
   }
 
@@ -214,8 +214,8 @@ class Connector implements IConnector {
       if (isDisconnected[0] || _isActivated || _isStopped) {
         return;
       }
-      await this._activateConnection(ticketID, ticketBytes);
-      this._loopActivateConnection(isDisconnected, ticketID, ticketBytes);
+      await _activateConnection(ticketID, ticketBytes);
+      _loopActivateConnection(isDisconnected, ticketID, ticketBytes);
     });
   }
 
@@ -224,9 +224,9 @@ class Connector implements IConnector {
       if (_isStopped) {
         return;
       }
-      final itemQueue = this._queueMessages.nextMessage();
+      final itemQueue = _queueMessages.nextMessage();
       if (itemQueue == null) {
-        this._loopRetrySendMessage();
+        _loopRetrySendMessage();
         return;
       }
 
@@ -235,54 +235,54 @@ class Connector implements IConnector {
         data: List<int>.empty(),
       );
       if (itemQueue.isGroup) {
-        content = await this._parser.buildGroupMessage(
-              itemQueue.msgID.toInt(),
-              itemQueue.msgTag.toInt(),
-              itemQueue.recvName,
-              itemQueue.content,
-              itemQueue.isEncrypted,
-              itemQueue.isCached,
-              itemQueue.isFirst,
-              itemQueue.isLast,
-              itemQueue.isRequest,
-            );
+        content = await _parser.buildGroupMessage(
+          itemQueue.msgID.toInt(),
+          itemQueue.msgTag.toInt(),
+          itemQueue.recvName,
+          itemQueue.content,
+          itemQueue.isEncrypted,
+          itemQueue.isCached,
+          itemQueue.isFirst,
+          itemQueue.isLast,
+          itemQueue.isRequest,
+        );
       } else {
-        content = await this._parser.buildMessage(
-              itemQueue.msgID.toInt(),
-              itemQueue.msgTag.toInt(),
-              itemQueue.recvName,
-              itemQueue.content,
-              itemQueue.isEncrypted,
-              itemQueue.isCached,
-              itemQueue.isFirst,
-              itemQueue.isLast,
-              itemQueue.isRequest,
-            );
+        content = await _parser.buildMessage(
+          itemQueue.msgID.toInt(),
+          itemQueue.msgTag.toInt(),
+          itemQueue.recvName,
+          itemQueue.content,
+          itemQueue.isEncrypted,
+          itemQueue.isCached,
+          itemQueue.isFirst,
+          itemQueue.isLast,
+          itemQueue.isRequest,
+        );
       }
       if (content.errorCode == ErrorCode.success) {
-        await this._conn.sendMessage(content.data);
+        await _conn.sendMessage(content.data);
       }
-      this._loopRetrySendMessage();
+      _loopRetrySendMessage();
     });
   }
 
   Future<Result<ServerTicket>> _prepare() async {
-    final serverKey = await this._proxy.exchangeKey();
+    final serverKey = await _proxy.exchangeKey();
     if (serverKey.errorCode != ErrorCode.success) {
       return Result(
         errorCode: serverKey.errorCode,
         data: ServerTicket.initDefault(),
       );
     }
-    return this._proxy.registerConnection(serverKey.data);
+    return _proxy.registerConnection(serverKey.data);
   }
 
   Future<int> _activateConnection(int ticketID, List<int> ticketBytes) async {
-    final msg = await this._parser.buildActivateMessage(ticketID, ticketBytes);
+    final msg = await _parser.buildActivateMessage(ticketID, ticketBytes);
     if (msg.errorCode != ErrorCode.success) {
       return msg.errorCode;
     }
-    return this._conn.sendMessage(msg.data);
+    return _conn.sendMessage(msg.data);
   }
 
   Future<int> _sendResponse(
@@ -292,28 +292,28 @@ class Connector implements IConnector {
     List<int> data,
     bool isEncrypted,
   ) async {
-    final msg = await this._parser.buildMessage(
-          msgID.toInt(),
-          msgTag.toInt(),
-          recvName,
-          data,
-          isEncrypted,
-          false,
-          true,
-          true,
-          false,
-        );
+    final msg = await _parser.buildMessage(
+      msgID.toInt(),
+      msgTag.toInt(),
+      recvName,
+      data,
+      isEncrypted,
+      false,
+      true,
+      true,
+      false,
+    );
     if (msg.errorCode != ErrorCode.success) {
       return msg.errorCode;
     }
-    return this._conn.sendMessage(msg.data);
+    return _conn.sendMessage(msg.data);
   }
 
   void _processMessage(
     List<int> content,
     Future<int> cb(String sender, List<int> data),
   ) async {
-    final msg = await this._parser.parseReceivedMessage(content);
+    final msg = await _parser.parseReceivedMessage(content);
     if (msg.errorCode != ErrorCode.success) {
       return;
     }
@@ -328,9 +328,9 @@ class Connector implements IConnector {
           !readyTicket.data.isReady) {
         return;
       }
-      this._isActivated = true;
-      if (this._counter == null) {
-        this._counter = Counter(
+      _isActivated = true;
+      if (_counter == null) {
+        _counter = Counter(
           writeIndex: readyTicket.data.idxWrite,
           minReadIdx: readyTicket.data.idxRead,
           maskReadBits: readyTicket.data.maskRead.toInt(),
@@ -339,7 +339,7 @@ class Connector implements IConnector {
       return;
     }
 
-    if (this._isActivated == false) {
+    if (_isActivated == false) {
       return;
     }
 
@@ -360,19 +360,19 @@ class Connector implements IConnector {
 
     if (msgData.isRequest == false) {
       // response
-      this._queueMessages.clearMessage(msgData.msgID);
+      _queueMessages.clearMessage(msgData.msgID);
       return;
     }
 
-    if (this._counter?.markReadDone(msgData.msgTag) ?? false) {
+    if (_counter?.markReadDone(msgData.msgTag) ?? false) {
       final errCode = await cb(msgData.name, msgData.data);
       if (errCode != ErrorCode.success) {
-        this._counter?.markReadUnused(msgData.msgTag);
+        _counter?.markReadUnused(msgData.msgTag);
         return;
       }
     }
 
-    this._sendResponse(
+    _sendResponse(
       msgData.msgID,
       msgData.msgTag,
       msgData.name,

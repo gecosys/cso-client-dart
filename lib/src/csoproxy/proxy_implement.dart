@@ -19,7 +19,7 @@ class Proxy implements IProxy {
   Proxy(IConfig conf) : _conf = conf;
 
   Future<Result<ServerKey>> exchangeKey() async {
-    final url = '${this._conf.csoAddress}/exchange-key';
+    final url = '${_conf.csoAddress}/exchange-key';
 
     final httpResp = await http.post(
       Uri.parse(url),
@@ -27,8 +27,8 @@ class Proxy implements IProxy {
         'Content-Type': 'application/json',
       },
       body: json.encode(<String, String>{
-        'project_id': this._conf.projectID,
-        'unique_name': this._conf.connName,
+        'project_id': _conf.projectID,
+        'unique_name': _conf.connName,
       }),
     );
 
@@ -57,7 +57,7 @@ class Proxy implements IProxy {
     buffer.setAll(lenGKey, nKeyBytes);
     buffer.setAll(lenGNKey, serverPubKeyBytes);
     final isValid = await RSA.verifySignature(
-      this._conf.csoPublicKey,
+      _conf.csoPublicKey,
       sign,
       buffer,
     );
@@ -95,9 +95,9 @@ class Proxy implements IProxy {
     );
 
     // Encrypt project's token by AES-GCM
-    final projectID = this._conf.projectID;
-    final connName = this._conf.connName;
-    final decodedToken = base64.decode(this._conf.projectToken);
+    final projectID = _conf.projectID;
+    final connName = _conf.connName;
+    final decodedToken = base64.decode(_conf.projectToken);
     final strClientPubKey = clientPubKey.toString();
     final lenProjectID = projectID.length;
     final lenProjectIDConnName = lenProjectID + connName.length;
@@ -113,7 +113,7 @@ class Proxy implements IProxy {
     );
 
     // Invoke API
-    final url = '${this._conf.csoAddress}/register-connection';
+    final url = '${_conf.csoAddress}/register-connection';
     final httpResp = await http.post(
       Uri.parse(url),
       headers: <String, String>{

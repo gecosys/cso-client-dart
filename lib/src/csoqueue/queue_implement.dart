@@ -12,13 +12,13 @@ class Queue implements IQueue {
         _items = List.filled(cap, null, growable: false);
 
   bool pushMessage(ItemQueue item) {
-    if (this._len == this._cap) {
+    if (_len == _cap) {
       return false;
     }
-    for (var idx = 0; idx < this._cap; ++idx) {
-      if (this._items[idx] == null) {
-        ++this._len;
-        this._items[idx] = item;
+    for (var idx = 0; idx < _cap; ++idx) {
+      if (_items[idx] == null) {
+        ++_len;
+        _items[idx] = item;
         return true;
       }
     }
@@ -29,8 +29,8 @@ class Queue implements IQueue {
     final limitSecond = BigInt.from(3);
     final now = BigInt.from(DateTime.now().second).toUnsigned(64);
     ItemQueue? nextItem;
-    for (var idx = 0; idx < this._cap; ++idx) {
-      final item = this._items[idx];
+    for (var idx = 0; idx < _cap; ++idx) {
+      final item = _items[idx];
       if (item == null) {
         continue;
       }
@@ -40,19 +40,19 @@ class Queue implements IQueue {
         item.numberRetry = item.numberRetry - 1;
       }
       if (item.numberRetry == 0) {
-        this._items[idx] = null;
-        --this._len;
+        _items[idx] = null;
+        --_len;
       }
     }
     return nextItem;
   }
 
   void clearMessage(BigInt msgID) {
-    for (var idx = 0; idx < this._cap; ++idx) {
-      final item = this._items[idx];
+    for (var idx = 0; idx < _cap; ++idx) {
+      final item = _items[idx];
       if (item != null && item.msgID == msgID) {
-        this._items[idx] = null;
-        --this._len;
+        _items[idx] = null;
+        --_len;
       }
     }
   }

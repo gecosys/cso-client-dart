@@ -5,7 +5,7 @@ class Status {
   const Status._internal(this._value);
 
   toString() => 'Status.$_value';
-  toValue() => this._value;
+  toValue() => _value;
 
   static parse(int value) {
     switch (value) {

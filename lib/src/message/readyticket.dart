@@ -26,9 +26,9 @@ class ReadyTicket {
         _idxWrite = idxWrite;
 
   bool get isReady => _isReady;
-  BigInt get idxRead => BigInt.from(this._idxRead).toUnsigned(64);
-  BigInt get maskRead => BigInt.from(this._maskRead).toUnsigned(32);
-  BigInt get idxWrite => BigInt.from(this._idxWrite).toUnsigned(64);
+  BigInt get idxRead => BigInt.from(_idxRead).toUnsigned(64);
+  BigInt get maskRead => BigInt.from(_maskRead).toUnsigned(32);
+  BigInt get idxWrite => BigInt.from(_idxWrite).toUnsigned(64);
 
   // ParseBytes converts bytes to ReadyTicket
   // Flag is_ready: 1 byte

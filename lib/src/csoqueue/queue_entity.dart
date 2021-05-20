@@ -41,8 +41,8 @@ class ItemQueue {
 
   set timestamp(BigInt value) => _timestamp = value.toInt();
 
-  BigInt get msgID => BigInt.from(this._msgID).toUnsigned(64);
-  BigInt get msgTag => BigInt.from(this._msgTag).toUnsigned(64);
+  BigInt get msgID => BigInt.from(_msgID).toUnsigned(64);
+  BigInt get msgTag => BigInt.from(_msgTag).toUnsigned(64);
 
   String get recvName => _recvName;
   List<int> get content => _content;
@@ -54,5 +54,5 @@ class ItemQueue {
   bool get isRequest => _isRequest;
   bool get isGroup => _isGroup;
 
-  BigInt get timestamp => BigInt.from(this._timestamp).toUnsigned(64);
+  BigInt get timestamp => BigInt.from(_timestamp).toUnsigned(64);
 }

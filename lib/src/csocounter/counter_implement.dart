@@ -16,34 +16,34 @@ class Counter implements ICounter {
         _maskReadBits = maskReadBits;
 
   int nextWriteIndex() {
-    this._writeIndex += BigInt.one;
-    return this._writeIndex.toUnsigned(64).toInt();
+    _writeIndex += BigInt.one;
+    return _writeIndex.toUnsigned(64).toInt();
   }
 
   void markReadUnused(BigInt idx) {
-    if (idx < this._minReadIdx) {
+    if (idx < _minReadIdx) {
       return;
     }
-    if (idx >= (this._minReadIdx + Counter.numberBits)) {
+    if (idx >= (_minReadIdx + Counter.numberBits)) {
       return;
     }
-    final mask = 1 << (idx - this._minReadIdx).toUnsigned(32).toInt();
-    this._maskReadBits &= ~mask;
+    final mask = 1 << (idx - _minReadIdx).toUnsigned(32).toInt();
+    _maskReadBits &= ~mask;
   }
 
   bool markReadDone(BigInt idx) {
-    if (idx < this._minReadIdx) {
+    if (idx < _minReadIdx) {
       return false;
     }
-    if (idx >= (this._minReadIdx + Counter.numberBits)) {
-      this._minReadIdx += Counter.numberBits;
-      this._maskReadBits = 0;
+    if (idx >= (_minReadIdx + Counter.numberBits)) {
+      _minReadIdx += Counter.numberBits;
+      _maskReadBits = 0;
     }
-    final mask = 1 << (idx - this._minReadIdx).toUnsigned(32).toInt();
-    if ((this._maskReadBits & mask) != 0) {
+    final mask = 1 << (idx - _minReadIdx).toUnsigned(32).toInt();
+    if ((_maskReadBits & mask) != 0) {
       return false;
     }
-    this._maskReadBits |= mask;
+    _maskReadBits |= mask;
     return true;
   }
 }

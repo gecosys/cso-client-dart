@@ -27,7 +27,7 @@ class Parser implements IParser {
             errorCode: rawBytes.errorCode, data: Cipher.initDefault());
       }
       final isValid = await HMAC.validateHMAC(
-        this._secretKey,
+        _secretKey,
         rawBytes.data,
         msg.data.sign,
       );
@@ -46,7 +46,7 @@ class Parser implements IParser {
     }
 
     msg.data.data = await AES.decrypt(
-      this._secretKey,
+      _secretKey,
       msg.data.iv,
       msg.data.authenTag,
       msg.data.data,
@@ -76,7 +76,7 @@ class Parser implements IParser {
     if (aad.errorCode != ErrorCode.success) {
       return Result(errorCode: aad.errorCode, data: List.empty());
     }
-    final secretBox = await AES.encrypt(this._secretKey, ticketBytes, aad.data);
+    final secretBox = await AES.encrypt(_secretKey, ticketBytes, aad.data);
     return Cipher.buildCipherBytes(
       0,
       0,
@@ -102,7 +102,7 @@ class Parser implements IParser {
     bool isLast,
     bool isRequest,
   ) async {
-    final msgType = this._getMessagetype(false, isCached);
+    final msgType = _getMessagetype(false, isCached);
     if (!isEncrypted) {
       final rawBytes = Cipher.buildRawBytes(
         msgID,
@@ -118,7 +118,7 @@ class Parser implements IParser {
       if (rawBytes.errorCode != ErrorCode.success) {
         return Result(errorCode: rawBytes.errorCode, data: List.empty());
       }
-      final sign = await HMAC.calcHMAC(this._secretKey, rawBytes.data);
+      final sign = await HMAC.calcHMAC(_secretKey, rawBytes.data);
       return Cipher.buildNoCipherBytes(
         msgID,
         msgTag,
@@ -145,7 +145,7 @@ class Parser implements IParser {
     if (aad.errorCode != ErrorCode.success) {
       return Result(errorCode: aad.errorCode, data: List.empty());
     }
-    final secretBox = await AES.encrypt(this._secretKey, content, aad.data);
+    final secretBox = await AES.encrypt(_secretKey, content, aad.data);
     return Cipher.buildCipherBytes(
       msgID,
       msgTag,
@@ -171,7 +171,7 @@ class Parser implements IParser {
     bool isLast,
     bool isRequest,
   ) async {
-    final msgType = this._getMessagetype(true, isCached);
+    final msgType = _getMessagetype(true, isCached);
     if (!isEncrypted) {
       final rawBytes = Cipher.buildRawBytes(
         msgID,
@@ -187,7 +187,7 @@ class Parser implements IParser {
       if (rawBytes.errorCode != ErrorCode.success) {
         return Result(errorCode: rawBytes.errorCode, data: List.empty());
       }
-      final sign = await HMAC.calcHMAC(this._secretKey, rawBytes.data);
+      final sign = await HMAC.calcHMAC(_secretKey, rawBytes.data);
       return Cipher.buildNoCipherBytes(
         msgID,
         msgTag,
@@ -214,7 +214,7 @@ class Parser implements IParser {
     if (aad.errorCode != ErrorCode.success) {
       return Result(errorCode: aad.errorCode, data: List.empty());
     }
-    final secretBox = await AES.encrypt(this._secretKey, content, aad.data);
+    final secretBox = await AES.encrypt(_secretKey, content, aad.data);
     return Cipher.buildCipherBytes(
       msgID,
       msgTag,

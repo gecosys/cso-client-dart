@@ -46,7 +46,7 @@ class ServerTicket {
         _serverSecretKey = serverSecretKey;
 
   String get hubAddress => _hubAddress;
-  BigInt get ticketID => BigInt.from(this._ticketID).toUnsigned(16);
+  BigInt get ticketID => BigInt.from(_ticketID).toUnsigned(16);
   List<int> get ticketBytes => _ticketBytes;
   List<int> get serverSecretKey => _serverSecretKey;
 }
@@ -65,7 +65,7 @@ class Response {
         _data = json['data'];
 
   int get returnCode => _returnCode;
-  BigInt get timestamp => BigInt.from(this._timestamp).toUnsigned(64);
+  BigInt get timestamp => BigInt.from(_timestamp).toUnsigned(64);
   dynamic get data => _data;
 }
 
@@ -106,7 +106,7 @@ class RespRegisterConnection {
         _authenTag = json['auth_tag'] ?? '';
 
   String get hubAddress => _hubAddress;
-  BigInt get ticketID => BigInt.from(this._ticketID).toUnsigned(16);
+  BigInt get ticketID => BigInt.from(_ticketID).toUnsigned(16);
   String get ticketToken => _ticketToken;
   String get pubKey => _pubKey;
   String get iv => _iv;

@@ -5,7 +5,7 @@ class MessageType {
   const MessageType._internal(this._value);
 
   toString() => 'MessageType.$_value';
-  toValue() => this._value;
+  toValue() => _value;
 
   static parse(int value) {
     switch (value) {

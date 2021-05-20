@@ -17,28 +17,28 @@ class Connection implements IConnection {
   Socket? _clienSocket;
 
   Future<int> _connect(String address) async {
-    if (this._status != Status.prepare && this._clienSocket != null) {
-      this._status = Status.prepare;
-      this._clienSocket?.close();
+    if (_status != Status.prepare && _clienSocket != null) {
+      _status = Status.prepare;
+      _clienSocket?.close();
     }
 
-    this._status = Status.connecting;
+    _status = Status.connecting;
 
     final strs = address.split(":");
     if (strs.length != 2) {
       return ErrorCode.invalidAddress;
     }
-    this._clienSocket = await Socket.connect(
+    _clienSocket = await Socket.connect(
       strs[0],
       int.parse(strs[1]),
       timeout: Duration(seconds: 30),
     );
-    this._status = Status.connected;
+    _status = Status.connected;
     return ErrorCode.success;
   }
 
   Future<void> close() async {
-    await this._clienSocket?.close();
+    await _clienSocket?.close();
   }
 
   Future<int> listen(
@@ -55,16 +55,16 @@ class Connection implements IConnection {
     var header = List<int>.filled(Connection.headerSize, 0, growable: false);
     var body = List<int>.filled(Connection.bufferSize, 0, growable: false);
 
-    final errorCode = await this._connect(address);
+    final errorCode = await _connect(address);
     if (errorCode != ErrorCode.success) {
       return errorCode;
     }
 
-    if (this._clienSocket == null) {
+    if (_clienSocket == null) {
       return ErrorCode.errorConnection;
     }
 
-    this._clienSocket?.listen(
+    _clienSocket?.listen(
         (buffer) {
           posBuffer = 0;
           lenBuffer = buffer.lengthInBytes;
@@ -111,14 +111,14 @@ class Connection implements IConnection {
         },
         onError: (e) {},
         onDone: () {
-          this._status = Status.disconnected;
+          _status = Status.disconnected;
           onDisconnected();
         });
     return ErrorCode.success;
   }
 
   Future<int> sendMessage(List<int> data) async {
-    if (this._status != Status.connected) {
+    if (_status != Status.connected) {
       return ErrorCode.errorConnection;
     }
 
@@ -132,8 +132,8 @@ class Connection implements IConnection {
     buffer.setAll(2, data);
 
     // Send message
-    this._clienSocket?.add(buffer);
-    // await this._clienSocket?.flush();
+    _clienSocket?.add(buffer);
+    // await _clienSocket?.flush();
     return ErrorCode.success;
   }
 }

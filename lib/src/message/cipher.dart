@@ -61,9 +61,9 @@ class Cipher {
         this.authenTag = authenTag,
         _sign = sign;
 
-  BigInt get msgID => BigInt.from(this._msgID).toUnsigned(64);
+  BigInt get msgID => BigInt.from(_msgID).toUnsigned(64);
   MessageType get msgType => _msgType;
-  BigInt get msgTag => BigInt.from(this._msgTag).toUnsigned(64);
+  BigInt get msgTag => BigInt.from(_msgTag).toUnsigned(64);
 
   bool get isFirst => _isFirst;
   bool get isLast => _isLast;
@@ -75,55 +75,55 @@ class Cipher {
   Result<List<int>> intoBytes() {
     if (this.isEncrypted) {
       return Cipher.buildCipherBytes(
-        this._msgID,
-        this._msgTag,
-        this._msgType,
-        this._isFirst,
-        this._isLast,
-        this._isRequest,
-        this._name,
+        _msgID,
+        _msgTag,
+        _msgType,
+        _isFirst,
+        _isLast,
+        _isRequest,
+        _name,
         this.iv,
         this.data,
         this.authenTag,
       );
     }
     return Cipher.buildNoCipherBytes(
-      this._msgID,
-      this._msgTag,
-      this._msgType,
-      this._isFirst,
-      this._isLast,
-      this._isRequest,
-      this._name,
+      _msgID,
+      _msgTag,
+      _msgType,
+      _isFirst,
+      _isLast,
+      _isRequest,
+      _name,
       this.data,
-      this._sign,
+      _sign,
     );
   }
 
   Result<List<int>> getRawBytes() {
     return Cipher.buildRawBytes(
-      this._msgID,
-      this._msgTag,
-      this._msgType,
+      _msgID,
+      _msgTag,
+      _msgType,
       this.isEncrypted,
-      this._isFirst,
-      this._isLast,
-      this._isRequest,
-      this._name,
+      _isFirst,
+      _isLast,
+      _isRequest,
+      _name,
       this.data,
     );
   }
 
   Result<List<int>> getAad() {
     return Cipher.buildAad(
-      this._msgID,
-      this._msgTag,
-      this._msgType,
+      _msgID,
+      _msgTag,
+      _msgType,
       this.isEncrypted,
-      this._isFirst,
-      this._isLast,
-      this._isRequest,
-      this._name,
+      _isFirst,
+      _isLast,
+      _isRequest,
+      _name,
     );
   }
 
